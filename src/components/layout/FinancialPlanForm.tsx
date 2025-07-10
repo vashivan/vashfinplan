@@ -54,7 +54,7 @@ export default function FinancialPlanForm() {
   
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
-      window.open(url, '_blank');
+      window.open(url, '_target');
     } catch (err) {
       console.error('Error submitting form', err);
     }
@@ -239,7 +239,7 @@ export default function FinancialPlanForm() {
       content: (
         <>
           <p className="mb-4">Натисни кнопку, щоб створити персональний PDF з фінансовим планом на основі твоїх відповідей.</p>
-          <button onClick={handleSubmit} className="btn w-full border-b-blue-400">Створити мій фінансовий план</button>
+          <button onClick={handleSubmit}  className="w-full rounded-xl bg-blue-500 px-6 py-3 text-white text-base font-semibold shadow-md hover:bg-blue-600 transition duration-300 ease-in-out">Створити мій фінансовий план</button>
         </>
       )
     }
