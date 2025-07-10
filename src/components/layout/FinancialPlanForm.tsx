@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { p } from 'framer-motion/client';
 
 const currencies = ['USD', 'EUR', 'KRW', 'UAH'];
 
