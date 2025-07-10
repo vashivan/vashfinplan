@@ -3,11 +3,13 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import { p } from 'framer-motion/client';
 
 const currencies = ['USD', 'EUR', 'KRW', 'UAH'];
 
 export default function FinancialPlanForm() {
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     income: '',
     currency: 'USD',
@@ -33,6 +35,7 @@ export default function FinancialPlanForm() {
   const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
 
   const handleSubmit = async () => {
+    setLoading(true);
     try {
       const parsedData = {
         ...formData,
@@ -55,8 +58,10 @@ export default function FinancialPlanForm() {
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       window.open(url, '_target');
+      setLoading(false);
     } catch (err) {
       console.error('Error submitting form', err);
+      setLoading(false);
     }
   };
 
@@ -239,7 +244,13 @@ export default function FinancialPlanForm() {
       content: (
         <>
           <p className="mb-4">Натисни кнопку, щоб створити персональний PDF з фінансовим планом на основі твоїх відповідей.</p>
-          <button onClick={handleSubmit}  className="w-full rounded-xl bg-blue-500 px-6 py-3 text-white text-base font-semibold shadow-md hover:bg-blue-600 transition duration-300 ease-in-out">Створити мій фінансовий план</button>
+          <button onClick={handleSubmit}  className="w-full rounded-xl bg-blue-500 px-6 py-3 text-white text-base font-semibold shadow-md hover:bg-blue-600 transition duration-300 ease-in-out">
+            {loading ? ( 
+              <p>Аналіз</p>
+            ) : (
+              <p>Створити мій фінансовий план</p>
+            )}
+          </button>
         </>
       )
     }
