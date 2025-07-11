@@ -1,9 +1,9 @@
-// ОНОВЛЕНО: підтримка емодзі через NotoColorEmoji або Symbola
-import { NextResponse } from 'next/server';
-import { PDFDocument, rgb } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
-import { readFile } from 'fs/promises';
+import { mkdir, readFile, writeFile } from 'fs/promises';
+import { NextResponse } from 'next/server';
 import path from 'path';
+import { PDFDocument, rgb } from 'pdf-lib';
+import { v4 as uuidv4 } from 'uuid';
 
 export async function POST(req: Request) {
   try {
@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     const pdfDoc = await PDFDocument.create();
     pdfDoc.registerFontkit(fontkit);
 
-    const fontPath = path.resolve(process.cwd(), 'public/fonts/Symbola.ttf');
+    const fontPath = path.resolve(process.cwd(), 'public/fonts/Roboto-Regular.ttf');
     const emojiFontPath = path.resolve(process.cwd(), 'public/fonts/Symbola.ttf');
 
     const fontBytes = await readFile(fontPath);
@@ -25,37 +25,57 @@ export async function POST(req: Request) {
     const blue = rgb(0.2, 0.4, 0.8);
     const black = rgb(0.1, 0.1, 0.1);
 
-    // --- Сторінка 1: Обкладинка ---
     let page = pdfDoc.addPage([595, 842]);
     page.drawText('Персональний фінансовий план', {
       x: 50,
       y: 750,
-      size: 32,
+      size: 24,
       font: customFont,
       color: blue,
     });
     page.drawText('💡 Плануй, щоб бути вільним', {
       x: 50,
-      y: 650,
-      size: 22,
+      y: 720,
+      size: 16,
       font: emojiCustomFont,
       color: black,
     });
-    page.drawText(`Для: ${formData.contact}`, {
+    page.drawText(`Ім’я: ${formData.name ?? ''}`, {
       x: 50,
-      y: 550,
-      size: 16,
+      y: 690,
+      size: 14,
+      font: customFont,
+      color: black,
+    });
+    page.drawText(`Email: ${formData.email ?? ''}`, {
+      x: 50,
+      y: 670,
+      size: 12,
+      font: customFont,
+      color: black,
+    });
+    page.drawText(`Телефон: ${formData.phone ?? ''}`, {
+      x: 50,
+      y: 650,
+      size: 12,
+      font: customFont,
+      color: black,
+    });
+    page.drawText(`Instagram або контакт: ${formData.contact ?? ''}`, {
+      x: 50,
+      y: 630,
+      size: 12,
       font: customFont,
       color: black,
     });
     page.drawText(`Дата: ${new Date().toLocaleDateString()}`, {
       x: 50,
-      y: 450,
-      size: 16,
+      y: 610,
+      size: 12,
       font: customFont,
       color: black,
     });
-    page.drawText('@vash_ivan', {
+    page.drawText('Фінплан від @vash_ivan', {
       x: 480,
       y: 30,
       size: 10,
@@ -63,16 +83,15 @@ export async function POST(req: Request) {
       color: rgb(0.4, 0.4, 0.4),
     });
 
-    // --- Сторінка 2: Доходи / Витрати / Подушка ---
     page = pdfDoc.addPage([595, 842]);
     let y = 790;
     const drawHeading = (text: string) => {
       page.drawText(text, { x: 50, y, size: 16, font: customFont, color: blue });
-      y -= 30;
+      y -= 35;
     };
     const drawText = (label: string, value: string | number, font = customFont) => {
       page.drawText(`${label} ${value}`, { x: 50, y, size: 12, font, color: black });
-      y -= 75;
+      y -= 80;
     };
 
     drawHeading('1. Доходи та Витрати');
@@ -91,7 +110,6 @@ export async function POST(req: Request) {
     drawText('Ціль подушки (міс.):', formData.bufferMonths);
     if (formData.hasBuffer) drawText('Вже є в подушці:', `${formData.bufferAmount} ${formData.currency}`);
 
-    // --- Сторінка 3: Інвестиції та цілі ---
     page = pdfDoc.addPage([595, 842]);
     y = 790;
     drawHeading('4. Інвестиції');
@@ -116,7 +134,6 @@ export async function POST(req: Request) {
     drawText('⬇️ Очікувано на подушці:', `${bufferTotal} ${formData.currency}`, emojiCustomFont);
     drawText('⬇️ Очікувано в інвестиціях:', `${investTotal} ${formData.currency}`, emojiCustomFont);
 
-    // --- Сторінка 4: Поради ---
     page = pdfDoc.addPage([595, 842]);
     y = 790;
     drawHeading('7. Рекомендації');
@@ -127,7 +144,7 @@ export async function POST(req: Request) {
       '🔹 Почни з ETF: VWRA, CSPX, SCHD, VOO тощо.',
       '🔹 Інвестуй у себе: знання, зв’язки, досвід.',
     ];
-    tips.forEach(t => { page.drawText(t, { x: 50, y, size: 12, font: emojiCustomFont, color: black }); y -= 25; });
+    tips.forEach(t => { page.drawText(t, { x: 50, y, size: 12, font: emojiCustomFont, color: black }); y -= 18; });
 
     page.drawText('@vash_ivan', {
       x: 480,
@@ -137,13 +154,16 @@ export async function POST(req: Request) {
       color: rgb(0.4, 0.4, 0.4),
     });
 
+    // --- ЗБЕРЕЖЕННЯ PDF У ПУБЛІЧНУ ПАПКУ ---
     const pdfBytes = await pdfDoc.save();
-    return new NextResponse(new Uint8Array(pdfBytes), {
-      headers: {
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': 'inline; filename="finplan.pdf"',
-      },
-    });
+    const fileId = uuidv4();
+    const fileName = `finplan-${fileId}.pdf`;
+    const outputPath = path.resolve(process.cwd(), 'public/tmp', fileName);
+    await mkdir(path.resolve(process.cwd(), 'public/tmp'), { recursive: true });
+    await writeFile(outputPath, pdfBytes);
+
+    const fileUrl = `/tmp/${fileName}`;
+    return NextResponse.json({ url: fileUrl });
   } catch (err) {
     console.error('❌ PDF generation failed:', err);
     return NextResponse.json({ error: 'Error generating PDF' }, { status: 500 });
