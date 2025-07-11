@@ -362,7 +362,7 @@ export default function FinancialPlanForm() {
       title: 'Крок 1: Контактні дані',
       content: (
         <>
-          <p className="text-sm text-gray-600 mb-5">Введи свої контактні дані — це потрібно, щоб надіслати тобі готовий фінплан і мати зв'язок.</p>
+          <p className="text-sm text-gray-600 mb-5">Введи свої контактні дані — це потрібно, щоб надіслати тобі готовий фінплан і мати зв{'`'}язок.</p>
           <input
             type="text"
             placeholder="Ім’я"
