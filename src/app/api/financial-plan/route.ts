@@ -1,3 +1,4 @@
+// app/api/financial-plan/route.ts
 import fontkit from '@pdf-lib/fontkit';
 import { mkdir, readFile, writeFile } from 'fs/promises';
 import { NextResponse } from 'next/server';
@@ -76,7 +77,7 @@ export async function POST(req: Request) {
       color: black,
     });
     page.drawText('Фінплан від @vash_ivan', {
-      x: 480,
+      x: 450,
       y: 30,
       size: 10,
       font: customFont,
@@ -152,6 +153,33 @@ export async function POST(req: Request) {
       size: 10,
       font: customFont,
       color: rgb(0.4, 0.4, 0.4),
+    });
+
+    // Додати сторінку для нотаток
+    page = pdfDoc.addPage([595, 842]);
+    y = 790;
+    page.drawText('Особисті нотатки', {
+      x: 50,
+      y,
+      size: 18,
+      font: customFont,
+      color: blue,
+    });
+    y -= 40;
+    page.drawText('Ця сторінка призначена для твоїх власних роздумів, ідей та фінансових рішень.', {
+      x: 50,
+      y,
+      size: 12,
+      font: customFont,
+      color: black,
+    });
+    y -= 30;
+    page.drawText('(Тут можна занотувати свої думки після заповнення фінплану...)', {
+      x: 50,
+      y,
+      size: 11,
+      font: customFont,
+      color: black,
     });
 
     // --- ЗБЕРЕЖЕННЯ PDF У ПУБЛІЧНУ ПАПКУ ---
