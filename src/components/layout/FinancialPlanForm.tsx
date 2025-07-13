@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import axios from 'axios';
 import Link from 'next/link';
+import axios from "axios";
 
 const currencies = ['USD', 'EUR', 'KRW', 'UAH'];
 
@@ -38,6 +38,35 @@ export default function FinancialPlanForm() {
   const nextStep = () => setStep(prev => Math.min(prev + 1, steps.length));
   const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
 
+  // const handleSubmit = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const parsedData = {
+  //       ...formData,
+  //       income: Number(formData.income),
+  //       expenses: Number(formData.expenses),
+  //       debt: Number(formData.debt),
+  //       bufferMonths: Number(formData.bufferMonths),
+  //       bufferAmount: Number(formData.bufferAmount),
+  //       monthlyInvestment: Number(formData.monthlyInvestment),
+  //       goalYear: Number(formData.goalYear),
+  //       periodMonths: Number(formData.periodMonths),
+  //     };
+
+  //     const res = await fetch('/api/financial-plan', {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify(parsedData),
+  //     });
+
+  //     const result = await res.json();
+  //     setPdfUrl(result.url);
+  //   } catch (err) {
+  //     console.error('Error submitting form', err);
+  //   }
+  //   setLoading(false);
+  // };
+
   const handleSubmit = async () => {
     setLoading(true);
     try {
@@ -52,23 +81,22 @@ export default function FinancialPlanForm() {
         goalYear: Number(formData.goalYear),
         periodMonths: Number(formData.periodMonths),
       };
-
+  
       const res = await fetch('/api/financial-plan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(parsedData),
       });
-
+  
       const result = await res.json();
-    
-      const BASE_URL = "https://vashfinplan.vercel.app/";
-      const fileUrl = `${BASE_URL}${result.url}`;
-      setPdfUrl(result.url);
-
+      const fileUrl = `https://vashfinplan.vercel.app${result.url}`;
+      setPdfUrl(fileUrl); // <- щоб виводилося також на останньому кроці
+  
+      // Відправка email через EmailJS
       const emailData = {
-        service_id: "service_4qzmcqt",
-        template_id: "template_4tzi8uz",
-        user_id: "JO5EenBZtLwYS-_-V",
+        service_id: 'service_4qzmcqt',
+        template_id: 'template_4tzi8uz',
+        user_id: 'JO5EenBZtLwYS-_-V',
         template_params: {
           name: formData.name,
           email: formData.email,
@@ -77,14 +105,17 @@ export default function FinancialPlanForm() {
           reply_to: formData.email,
         },
       };
-
+  
       await axios.post('https://api.emailjs.com/api/v1.0/email/send', emailData);
+      console.log('✅ Email sent successfully');
+  
     } catch (err) {
-      console.error('Error submitting form or sending email', err);
+      console.error('❌ Error submitting form or sending email', err);
     }
+  
     setLoading(false);
   };
-
+  
   const steps = [
     {
       title: 'Крок 1: Контактні дані',
@@ -278,7 +309,7 @@ export default function FinancialPlanForm() {
       content: (
         <>
           <p className="mb-4">Натисни кнопку, щоб створити персональний PDF з фінансовим планом на основі твоїх відповідей.</p>
-          <button onClick={handleSubmit} disabled={loading} className="w-full rounded-xl bg-blue-500 px-6 py-3 text-white text-base font-semibold shadow-md hover:bg-blue-600 transition duration-300 ease-in-out">
+          <button onClick={handleSubmit} className="w-full rounded-xl bg-blue-500 px-6 py-3 text-white text-base font-semibold shadow-md hover:bg-blue-600 transition duration-300 ease-in-out">
             {loading ? (
               <p>Аналіз</p>
             ) : (
@@ -290,14 +321,11 @@ export default function FinancialPlanForm() {
     }
   ];
 
-  const progress = Math.round((step / steps.length) * 100);
-
   return (
     <section className="h-[100dvh] flex flex-col justify-center items-center px-4 py-12 bg-gradient-to-tr from-blue-100 via-blue-200 to-blue-300">
       <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-6 mb-10">
         <div className="flex flex-col text-sm text-gray-500 mb-4 text-right">
-          <span>Крок {step} з {steps.length}</span>
-          <span>{progress}%</span>
+          Крок {step} з {steps.length}
         </div>
         <AnimatePresence mode="wait">
           <motion.div
