@@ -61,13 +61,13 @@ export default function FinancialPlanForm() {
 
       const result = await res.json();
       setPdfUrl(result.url);
-      const BASE_URL = process.env.BASE_URL;
+      const BASE_URL = "https://vashfinplan.vercel.app";
       const fileUrl = `${BASE_URL}${result.url}`;
 
       const emailData = {
-        service_id: process.env.SERVICE_ID,
-        template_id: process.env.TEMPLATE_ID,
-        user_id: process.env.USER_ID,
+        service_id: "service_4qzmcqt",
+        template_id: "template_4tzi8uz",
+        user_id: "JO5EenBZtLwYS-_-V",
         template_params: {
           name: formData.name,
           email: formData.email,
