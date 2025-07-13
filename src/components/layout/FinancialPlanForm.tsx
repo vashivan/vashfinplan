@@ -88,8 +88,13 @@ export default function FinancialPlanForm() {
         body: JSON.stringify(parsedData),
       });
   
+  
       const result = await res.json();
-      const fileUrl = `https://vashfinplan.vercel.app/${result.url}`;
+      if (!result.url) {
+        throw new Error('❌ Не отримано шлях до PDF');
+      }
+
+      const fileUrl = `https://vashfinplan.vercel.app${result.url}`;
       setPdfUrl(fileUrl); // <- щоб виводилося також на останньому кроці
   
       // Відправка email через EmailJS
