@@ -61,7 +61,7 @@ export default function FinancialPlanForm() {
 
       const result = await res.json();
       setPdfUrl(result.url);
-      const BASE_URL = "https://vashfinplan.vercel.app";
+      const BASE_URL = "https://vashfinplan.vercel.app/";
       const fileUrl = `${BASE_URL}${result.url}`;
 
       const emailData = {
