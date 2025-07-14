@@ -1,11 +1,10 @@
 // app/api/financial-plan/route.ts
 
 import fontkit from '@pdf-lib/fontkit';
-import { mkdir, readFile, writeFile } from 'fs/promises';
+import { readFile } from 'fs/promises';
 import { NextResponse } from 'next/server';
 import path from 'path';
 import { PDFDocument, rgb } from 'pdf-lib';
-import { v4 as uuidv4 } from 'uuid';
 
 export async function POST(req: Request) {
   try {
@@ -27,7 +26,6 @@ export async function POST(req: Request) {
     const blue = rgb(0.2, 0.4, 0.8);
     const black = rgb(0.1, 0.1, 0.1);
 
-    // Обкладинка
     let page = pdfDoc.addPage([595, 842]);
     page.drawRectangle({
       x: 40,
@@ -87,7 +85,6 @@ export async function POST(req: Request) {
       font: customFont,
       color: black,
     });
-
     page.drawText('Фінплан від @vash_ivan', {
       x: 420,
       y: 30,
@@ -96,7 +93,6 @@ export async function POST(req: Request) {
       color: rgb(0.4, 0.4, 0.4),
     });
 
-    // Додаткові сторінки
     const newPage = () => {
       page = pdfDoc.addPage([595, 842]);
       return 790;
@@ -105,18 +101,18 @@ export async function POST(req: Request) {
     let y = newPage();
 
     const drawHeading = (text: string) => {
-  if (y < 100) y = newPage();
-  y -= 20;
-  page.drawText(text, { x: 50, y, size: 16, font: customFont, color: blue });
-  y -= 10;
-  page.drawLine({
-    start: { x: 50, y },
-    end: { x: 545, y },
-    thickness: 0.5,
-    color: rgb(0.7, 0.7, 0.9),
-  });
-  y -= 40;
-};
+      if (y < 100) y = newPage();
+      y -= 20;
+      page.drawText(text, { x: 50, y, size: 16, font: customFont, color: blue });
+      y -= 10;
+      page.drawLine({
+        start: { x: 50, y },
+        end: { x: 545, y },
+        thickness: 0.5,
+        color: rgb(0.7, 0.7, 0.9),
+      });
+      y -= 40;
+    };
 
     const drawText = (label: string, value: string | number, font = customFont) => {
       if (y < 80) y = newPage();
@@ -129,7 +125,7 @@ export async function POST(req: Request) {
     drawText('Постійні витрати:', `${formData.expenses} ${formData.currency}`);
     drawText('Залишається після витрат:', `${formData.income - formData.expenses} ${formData.currency}`);
 
-    drawHeading('💳 2. Борги');
+    drawHeading('2. Борги');
     if (formData.hasDebt) {
       drawText('Борг щомісяця:', `${formData.debt ?? 0} ${formData.currency}`);
     } else {
@@ -138,8 +134,9 @@ export async function POST(req: Request) {
 
     drawHeading('3. Резервний фонд');
     drawText('Ціль подушки (міс.):', formData.bufferMonths);
-    if (formData.hasBuffer)
+    if (formData.hasBuffer) {
       drawText('Вже є в подушці:', `${formData.bufferAmount} ${formData.currency}`);
+    }
 
     drawHeading('4. Інвестиції');
     drawText('Щомісячне відкладання:', `${formData.monthlyInvestment} ${formData.currency}`);
@@ -199,73 +196,15 @@ export async function POST(req: Request) {
     drawHeading('15. Майбутні події');
     drawText('Очікувані зміни:', formData.futureEvents);
 
-    // Рекомендації
-    page = pdfDoc.addPage([595, 842]);
-    y = 790;
-    drawHeading('16. Рекомендації');
-    const tips = [
-      '🔹 Облік витрат = контроль грошей.',
-      '🔹 Резерв на 3–6 міс. — перед інвестиціями.',
-      '🔹 Автоматичне відкладання = стабільність.',
-      '🔹 Почни з ETF: VWRA, CSPX, SCHD, VOO тощо.',
-      '🔹 Інвестуй у себе: знання, зв’язки, досвід.',
-    ];
-    tips.forEach(t => { page.drawText(t, { x: 50, y, size: 12, font: emojiCustomFont, color: black }); y -= 28; });
-
-    page.drawText('@vash_ivan', {
-      x: 480,
-      y: 30,
-      size: 10,
-      font: customFont,
-      color: rgb(0.4, 0.4, 0.4),
-    });
-
-    // Особисті нотатки
-    page = pdfDoc.addPage([595, 842]);
-    y = 790;
-    page.drawText('Особисті нотатки', {
-      x: 50,
-      y,
-      size: 18,
-      font: customFont,
-      color: blue,
-    });
-    y -= 40;
-    y -= 40;
-    page.drawText('Ця сторінка призначена для твоїх власних роздумів, ідей та фінансових рішень.', {
-      x: 50,
-      y,
-      size: 12,
-      font: customFont,
-      color: black,
-    });
-    y -= 50;
-    page.drawText('(Тут можна занотувати свої думки після заповнення фінплану...)', {
-      x: 50,
-      y,
-      size: 11,
-      font: customFont,
-      color: black,
-    });
-    for (let i = 0; i < 15; i++) {
-      y -= 35;
-      page.drawLine({
-        start: { x: 50, y },
-        end: { x: 545, y },
-        thickness: 0.3,
-        color: rgb(0.85, 0.85, 0.85),
-      });
-    }
-
     const pdfBytes = await pdfDoc.save();
-    const fileId = uuidv4();
-    const fileName = `finplan-${fileId}.pdf`;
-    const outputPath = path.resolve(process.cwd(), 'public/tmp', fileName);
-    await mkdir(path.resolve(process.cwd(), 'public/tmp'), { recursive: true });
-    await writeFile(outputPath, pdfBytes);
 
-    const fileUrl = `/tmp/${fileName}`;
-    return NextResponse.json({ url: fileUrl });
+    return new Response(pdfBytes, {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': 'inline; filename="finplan.pdf"',
+      },
+    });
   } catch (err) {
     console.error('❌ PDF generation failed:', err);
     return NextResponse.json({ error: 'Error generating PDF' }, { status: 500 });

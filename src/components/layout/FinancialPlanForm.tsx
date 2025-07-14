@@ -68,9 +68,12 @@ export default function FinancialPlanForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(parsedData),
       });
-
-      const result = await res.json();
-      setPdfUrl(result.url);
+      
+      if (!res.ok) throw new Error('PDF generation failed');
+      
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      setPdfUrl(url);
 
       const emailData = {
         service_id: "service_4qzmcqt",
