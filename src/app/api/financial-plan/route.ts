@@ -129,10 +129,12 @@ export async function POST(req: Request) {
     drawText('Постійні витрати:', `${formData.expenses} ${formData.currency}`);
     drawText('Залишається після витрат:', `${formData.income - formData.expenses} ${formData.currency}`);
 
-    drawHeading('2. Борги');
-    formData.hasDebt
-      ? drawText('Борг щомісяця:', `${formData.debt ?? 0} ${formData.currency}`)
-      : drawText('Немає боргів', '');
+    drawHeading('💳 2. Борги');
+    if (formData.hasDebt) {
+      drawText('Борг щомісяця:', `${formData.debt ?? 0} ${formData.currency}`);
+    } else {
+      drawText('Немає боргів', '');
+    }
 
     drawHeading('3. Резервний фонд');
     drawText('Ціль подушки (міс.):', formData.bufferMonths);
