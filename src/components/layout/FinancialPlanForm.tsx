@@ -24,6 +24,25 @@ export default function FinancialPlanForm() {
     riskTolerance: '', investmentExperience: '', futureEvents: ''
   });
 
+  const getInputClass = (key: keyof typeof formData) => {
+    const isRequired = () => {
+      if (step === 1) return ['name', 'email', 'phone'].includes(key);
+      if (step === 2) return key === 'income';
+      if (step === 3) return key === 'expenses';
+      if (step === 4) return formData.hasDebt && key === 'debt';
+      if (step === 5) return key === 'bufferMonths' || (formData.hasBuffer && key === 'bufferAmount');
+      if (step === 6) return key === 'monthlyInvestment';
+      if (step === 7) return key === 'goalYear';
+      if (step === 8) return key === 'periodMonths';
+      return false;
+    };
+  
+    const isEmpty = formData[key] === '';
+    return `input mb-4 mr-3 border-b-2 ${
+      isRequired() && isEmpty ? 'border-red-500' : 'border-b-blue-400'
+    }`;
+  };
+
   const handleChange = (key: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [key]: value }));
   };
@@ -50,27 +69,38 @@ export default function FinancialPlanForm() {
         goalYear: Number(formData.goalYear),
         periodMonths: Number(formData.periodMonths),
         plannedExpensesAmount: Number(formData.plannedExpensesAmount),
-      
+
         // Деталізація витрат
         housing: Number(formData.housing),
         food: Number(formData.food),
         cafes: Number(formData.cafes),
         entertainment: Number(formData.entertainment),
         otherExpenses: Number(formData.otherExpenses),
-      
+
         // Поточні заощадження та інвестиції
         currentSavings: Number(formData.currentSavings),
         currentInvestments: Number(formData.currentInvestments),
       };
+
+      await fetch('/api/save-client', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          contact: formData.contact,
+        }),
+      });
 
       const res = await fetch('/api/financial-plan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(parsedData),
       });
-      
+
       if (!res.ok) throw new Error('PDF generation failed');
-      
+
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       setPdfUrl(url);
@@ -103,21 +133,24 @@ export default function FinancialPlanForm() {
             placeholder="Ім’я"
             value={formData.name}
             onChange={e => handleChange('name', e.target.value)}
-            className="input mb-3 border-b-1 border-b-blue-400"
+            className={getInputClass('name')}
+            required
           />
           <input
             type="email"
             placeholder="Email"
             value={formData.email}
             onChange={e => handleChange('email', e.target.value)}
-            className="input mb-3 border-b-1 border-b-blue-400"
+             className={getInputClass('email')}
+            required
           />
           <input
             type="tel"
             placeholder="Номер телефону"
             value={formData.phone}
             onChange={e => handleChange('phone', e.target.value)}
-            className="input mb-4 border-b-1 border-b-blue-400"
+            className={getInputClass('phone')}
+            required
           />
         </>
       )
@@ -132,7 +165,8 @@ export default function FinancialPlanForm() {
             placeholder="Сума в місяць"
             value={formData.income}
             onChange={e => handleChange('income', e.target.value)}
-            className="input mb-4 mr-3 border-b-1 border-b-blue-400"
+            className={getInputClass('income')}
+            required
           />
           <select
             value={formData.currency}
@@ -156,7 +190,7 @@ export default function FinancialPlanForm() {
             placeholder="Сума витрат"
             value={formData.expenses}
             onChange={e => handleChange('expenses', e.target.value)}
-            className="input mb-4 mr-3 border-b-1 border-b-blue-400"
+            className={getInputClass('expenses')}
           />
         </>
       )
@@ -182,7 +216,7 @@ export default function FinancialPlanForm() {
               placeholder="Сума щомісячно"
               value={formData.debt || ''}
               onChange={e => handleChange('debt', e.target.value)}
-              className="input mb-4 mr-3 border-b-1 border-b-blue-400"
+              className={getInputClass('debt')}
             />
           )}
         </>
@@ -198,7 +232,7 @@ export default function FinancialPlanForm() {
             placeholder="Кількість місяців"
             value={formData.bufferMonths}
             onChange={e => handleChange('bufferMonths', e.target.value)}
-            className="input mb-4 mr-3 border-b-1 border-b-blue-400"
+            className={getInputClass('bufferMonths')}
           />
           <label className="flex items-center gap-2">
             <input
@@ -214,7 +248,7 @@ export default function FinancialPlanForm() {
               placeholder="Сума"
               value={formData.bufferAmount || ''}
               onChange={e => handleChange('bufferAmount', e.target.value)}
-              className="input mb-4 mr-3 border-b-1 border-b-blue-400"
+              className={getInputClass('bufferAmount')}
             />
           )}
         </>
@@ -230,12 +264,12 @@ export default function FinancialPlanForm() {
             placeholder="Сума щомісяця"
             value={formData.monthlyInvestment}
             onChange={e => handleChange('monthlyInvestment', e.target.value)}
-            className="input mb-4 mr-3 border-b-1 border-b-blue-400"
+            className={getInputClass('monthlyInvestment')}
           />
           <select
             value={formData.investmentType}
             onChange={e => handleChange('investmentType', e.target.value)}
-            className="input"
+            className="investmentType"
           >
             <option value="regular">Регулярно</option>
             <option value="variable">Залежить від контрактів</option>
@@ -253,14 +287,14 @@ export default function FinancialPlanForm() {
             placeholder="Сума за період"
             value={formData.goalYear}
             onChange={e => handleChange('goalYear', e.target.value)}
-            className="input mb-4 mr-3 border-b-1 border-b-blue-400"
+            className={getInputClass('goalYear')}
           />
           <input
             type="text"
             placeholder="Мета (квартира, свобода від роботи...)"
             value={formData.goalReason}
             onChange={e => handleChange('goalReason', e.target.value)}
-            className="input mb-4 mr-3 border-b-1 border-b-blue-400"
+            className={getInputClass('goalReason')}
           />
         </>
       )
@@ -275,7 +309,7 @@ export default function FinancialPlanForm() {
             placeholder="6, 12 або 24 місяці..."
             value={formData.periodMonths}
             onChange={e => handleChange('periodMonths', e.target.value)}
-            className="input mb-4 mr-3 border-b-1 border-b-blue-400"
+            className={getInputClass('periodMonths')}
           />
         </>
       )
@@ -284,11 +318,41 @@ export default function FinancialPlanForm() {
       title: 'Крок 9: Деталізація витрат',
       content: (
         <>
-          <input type="text" placeholder="Житло (оренда, комуналка)" value={formData.housing} onChange={e => setFormData(prev => ({ ...prev, housing: e.target.value }))} className="input mb-3" />
-          <input type="text" placeholder="Їжа (магазин, доставка)" value={formData.food} onChange={e => setFormData(prev => ({ ...prev, food: e.target.value }))} className="input mb-3" />
-          <input type="text" placeholder="Кафе та ресторани" value={formData.cafes} onChange={e => setFormData(prev => ({ ...prev, cafes: e.target.value }))} className="input mb-3" />
-          <input type="text" placeholder="Розваги, подорожі, хобі" value={formData.entertainment} onChange={e => setFormData(prev => ({ ...prev, entertainment: e.target.value }))} className="input mb-3" />
-          <input type="text" placeholder="Інше (звʼязок, транспорт...)" value={formData.otherExpenses} onChange={e => setFormData(prev => ({ ...prev, otherExpenses: e.target.value }))} className="input mb-3" />
+          <p className="text-sm text-gray-600 mb-5">Давай розберемо детальніше на що йдуть твої гроші. Це допоможе тобі краще оцінити свої потреби до життя. Порахуй або напиши приблизно як ти вважаєш.</p>
+          <input
+            type="text"
+            placeholder="Житло (оренда, комуналка)"
+            value={formData.housing}
+            onChange={e => setFormData(prev => ({ ...prev, housing: e.target.value }))}  className={getInputClass('housing')}
+          />
+          <input
+            type="text"
+            placeholder="Їжа (магазин, доставка)"
+            value={formData.food}
+            onChange={e => setFormData(prev => ({ ...prev, food: e.target.value }))}
+            className={getInputClass('food')}
+          />
+          <input
+            type="text"
+            placeholder="Кафе та ресторани"
+            value={formData.cafes}
+            onChange={e => setFormData(prev => ({ ...prev, cafes: e.target.value }))}
+            className={getInputClass('cafes')}
+          />
+          <input
+            type="text"
+            placeholder="Розваги, подорожі, хобі"
+            value={formData.entertainment}
+            onChange={e => setFormData(prev => ({ ...prev, entertainment: e.target.value }))}
+            className={getInputClass('entertainment')}
+          />
+          <input
+            type="text"
+            placeholder="Інше (звʼязок, транспорт...)"
+            value={formData.otherExpenses}
+            onChange={e => setFormData(prev => ({ ...prev, otherExpenses: e.target.value }))}
+            className={getInputClass('otherExpenses')}
+          />
         </>
       )
     },
@@ -296,8 +360,21 @@ export default function FinancialPlanForm() {
       title: 'Крок 10: Заплановані великі витрати',
       content: (
         <>
-          <input type="text" placeholder="Опис запланованих витрат" value={formData.plannedExpensesDesc} onChange={e => setFormData(prev => ({ ...prev, plannedExpensesDesc: e.target.value }))} className="input mb-3" />
-          <input type="text" placeholder="Сума" value={formData.plannedExpensesAmount} onChange={e => setFormData(prev => ({ ...prev, plannedExpensesAmount: e.target.value }))} className="input mb-3" />
+          <p className="text-sm text-gray-600 mb-5">Якщо в тебе у майбутньому заплановані фінансові операції чи покупки, опиши це тут у довільний формі. Якщо ні - просто пропусти цей крок.</p>
+          <input
+            type="text"
+            placeholder="Опис запланованих витрат"
+            value={formData.plannedExpensesDesc}
+            onChange={e => setFormData(prev => ({ ...prev, plannedExpensesDesc: e.target.value }))}
+            className={getInputClass('plannedExpensesDesc')}
+          />
+          <input
+            type="text"
+            placeholder="Сума"
+            value={formData.plannedExpensesAmount}
+            onChange={e => setFormData(prev => ({ ...prev, plannedExpensesAmount: e.target.value }))}
+            className={getInputClass('plannedExpensesAmount')}
+          />
         </>
       )
     },
@@ -305,8 +382,21 @@ export default function FinancialPlanForm() {
       title: 'Крок 11: Податковий статус і країна',
       content: (
         <>
-          <input type="text" placeholder="Країна проживання / роботи" value={formData.country} onChange={e => setFormData(prev => ({ ...prev, country: e.target.value }))} className="input mb-3" />
-          <input type="text" placeholder="Податковий статус або ФОП" value={formData.taxStatus} onChange={e => setFormData(prev => ({ ...prev, taxStatus: e.target.value }))} className="input mb-3" />
+          <p className="text-sm text-gray-600 mb-5">Якщо плануєш інвестувати, то це дуже важливий фактор, який впливає на твій поальший план та вибір активів до твого портфелю.</p>
+          <input
+            type="text"
+            placeholder="Країна проживання / роботи"
+            value={formData.country}
+            onChange={e => setFormData(prev => ({ ...prev, country: e.target.value }))}
+            className={getInputClass('country')}
+          />
+          <input
+            type="text"
+            placeholder="Податковий статус або ФОП"
+            value={formData.taxStatus}
+            onChange={e => setFormData(prev => ({ ...prev, taxStatus: e.target.value }))}
+            className={getInputClass('taxStatus')}
+          />
         </>
       )
     },
@@ -314,9 +404,27 @@ export default function FinancialPlanForm() {
       title: 'Крок 12: Фінансова поведінка',
       content: (
         <>
-          <input type="text" placeholder="Чи ведеш облік витрат?" value={formData.tracksExpenses} onChange={e => setFormData(prev => ({ ...prev, tracksExpenses: e.target.value }))} className="input mb-3" />
-          <input type="text" placeholder="Чи бувають емоційні витрати?" value={formData.emotionalSpending} onChange={e => setFormData(prev => ({ ...prev, emotionalSpending: e.target.value }))} className="input mb-3" />
-          <input type="text" placeholder="Досвід у веденні бюджету" value={formData.budgetingExperience} onChange={e => setFormData(prev => ({ ...prev, budgetingExperience: e.target.value }))} className="input mb-3" />
+          <p className="text-sm text-gray-600 mb-5">Дай відповідь на питання у довільній формі. Якщо не бажаєш, то можеш просто пропустити цей крок та піти дал.</p>
+          <input
+            type="text"
+            placeholder="Чи ведеш облік витрат?"
+            value={formData.tracksExpenses}
+            onChange={e => setFormData(prev => ({ ...prev, tracksExpenses: e.target.value }))}
+            className={getInputClass('tracksExpenses')}
+          />
+          <input
+            type="text"
+            placeholder="Чи бувають емоційні витрати?"
+            value={formData.emotionalSpending}
+            onChange={e => setFormData(prev => ({ ...prev, emotionalSpending: e.target.value }))}
+            className={getInputClass('emotionalSpending')}
+          />
+          <input
+            type="text"
+            placeholder="Досвід у веденні бюджету" value={formData.budgetingExperience}
+            onChange={e => setFormData(prev => ({ ...prev, budgetingExperience: e.target.value }))}
+            className={getInputClass('budgetingExperience')}
+          />
         </>
       )
     },
@@ -324,8 +432,21 @@ export default function FinancialPlanForm() {
       title: 'Крок 13: Пріоритети та стиль інвестування',
       content: (
         <>
-          <input type="text" placeholder="Що для тебе найважливіше?" value={formData.lifePriorities} onChange={e => setFormData(prev => ({ ...prev, lifePriorities: e.target.value }))} className="input mb-3" />
-          <input type="text" placeholder="Інвестуєш активно чи пасивно?" value={formData.investmentStyle} onChange={e => setFormData(prev => ({ ...prev, investmentStyle: e.target.value }))} className="input mb-3" />
+          <p className="text-sm text-gray-600 mb-5">ДЛя подальшої роботи це дуже важлива інформація, яка також впливатиме на вибір стратегії, оцінки ризиків та загального плану фінансової свободи.</p>
+          <input
+            type="text"
+            placeholder="Що для тебе найважливіше?"
+            value={formData.lifePriorities}
+            onChange={e => setFormData(prev => ({ ...prev, lifePriorities: e.target.value }))}
+            className={getInputClass('lifePriorities')}
+          />
+          <input
+            type="text"
+            placeholder="Інвестуєш активно чи пасивно?"
+            value={formData.investmentStyle}
+            onChange={e => setFormData(prev => ({ ...prev, investmentStyle: e.target.value }))}
+            className={getInputClass('investmentStyle')}
+          />
         </>
       )
     },
@@ -333,8 +454,21 @@ export default function FinancialPlanForm() {
       title: 'Крок 14: Поточні заощадження та інвестиції',
       content: (
         <>
-          <input type="text" placeholder="Де зберігаєш гроші?" value={formData.currentSavings} onChange={e => setFormData(prev => ({ ...prev, currentSavings: e.target.value }))} className="input mb-3" />
-          <input type="text" placeholder="Які інвестиції вже маєш?" value={formData.currentInvestments} onChange={e => setFormData(prev => ({ ...prev, currentInvestments: e.target.value }))} className="input mb-3" />
+          <p className="text-sm text-gray-600 mb-5">Якщо поки не маєш бажання ділитися - пропускай цей крок та йди далі.</p>
+          <input
+            type="text"
+            placeholder="Де зберігаєш гроші?"
+            value={formData.currentSavings}
+            onChange={e => setFormData(prev => ({ ...prev, currentSavings: e.target.value }))}
+            className={getInputClass('currentSavings')}
+          />
+          <input
+            type="text"
+            placeholder="Які інвестиції вже маєш?"
+            value={formData.currentInvestments}
+            onChange={e => setFormData(prev => ({ ...prev, currentInvestments: e.target.value }))}
+            className={getInputClass('currentInvestments')}
+          />
         </>
       )
     },
@@ -342,8 +476,21 @@ export default function FinancialPlanForm() {
       title: 'Крок 15: Досвід та ризик',
       content: (
         <>
-          <input type="text" placeholder="Рівень толерантності до ризику" value={formData.riskTolerance} onChange={e => setFormData(prev => ({ ...prev, riskTolerance: e.target.value }))} className="input mb-3" />
-          <input type="text" placeholder="Чи є досвід інвестування?" value={formData.investmentExperience} onChange={e => setFormData(prev => ({ ...prev, investmentExperience: e.target.value }))} className="input mb-3" />
+          <p className="text-sm text-gray-600 mb-5">Важливо почути про твій досвід та відношення до інвестицій загалом. Просто дай чесну відповідь у довільному форматі.</p>
+          <input
+            type="text"
+            placeholder="Рівень толерантності до ризику"
+            value={formData.riskTolerance}
+            onChange={e => setFormData(prev => ({ ...prev, riskTolerance: e.target.value }))}
+            className={getInputClass('riskTolerance')}
+          />
+          <input
+            type="text"
+            placeholder="Чи є досвід інвестування?"
+            value={formData.investmentExperience}
+            onChange={e => setFormData(prev => ({ ...prev, investmentExperience: e.target.value }))}
+            className={getInputClass('investmentExperience')}
+          />
         </>
       )
     },
@@ -351,7 +498,14 @@ export default function FinancialPlanForm() {
       title: 'Крок 16: Майбутні події',
       content: (
         <>
-          <input type="text" placeholder="Наприклад: переїзд, навчання, дитина..." value={formData.futureEvents} onChange={e => setFormData(prev => ({ ...prev, futureEvents: e.target.value }))} className="input mb-3" />
+          <p className="text-sm text-gray-600 mb-5">Важливо мати мати плани та готуватися до них не тільки морально. Якщо не має бажання ділитися з цим, то пропусти крок.</p>
+          <input
+            type="text"
+            placeholder="Наприклад: переїзд, навчання, дитина..."
+            value={formData.futureEvents}
+            onChange={e => setFormData(prev => ({ ...prev, futureEvents: e.target.value }))}
+            className={getInputClass('futureEvents')}
+          />
         </>
       )
     },
@@ -359,7 +513,7 @@ export default function FinancialPlanForm() {
       title: 'Готово!',
       content: (
         <>
-          <p className="mb-4">Натисни кнопку, щоб створити персональний PDF з фінансовим планом на основі твоїх відповідей.</p>
+          <p className="text-sm text-gray-600 mb-5">Натисни кнопку, щоб створити персональний PDF з фінансовим планом на основі твоїх відповідей.</p>
           <button onClick={handleSubmit} className="w-full rounded-xl bg-blue-500 px-6 py-3 text-white text-base font-semibold shadow-md hover:bg-blue-600 transition duration-300 ease-in-out">
             {loading ? (
               <p>Аналіз</p>
@@ -372,8 +526,31 @@ export default function FinancialPlanForm() {
     }
   ];
 
-  const progress = Math.round((step / 17) * 100);
+  const progress = Math.round((step / steps.length) * 100);
 
+  const isStepValid = () => {
+    switch (step) {
+      case 1:
+        return !!formData.name && !!formData.email && !!formData.phone;
+      case 2:
+        return !!formData.income;
+      case 3:
+        return !!formData.expenses;
+      case 4:
+        return formData.hasDebt ? !!formData.debt : true;
+      case 5:
+        return !!formData.bufferMonths && (!formData.hasBuffer || !!formData.bufferAmount);
+      case 6:
+        return !!formData.monthlyInvestment;
+      case 7:
+        return !!formData.goalYear;
+      case 8:
+        return !!formData.periodMonths;
+      default:
+        return true; // інші кроки не обов’язкові
+    }
+  }; 
+  
   return (
     <section className="h-[100dvh] flex flex-col justify-center items-center px-4 py-12 bg-gradient-to-tr from-blue-100 via-blue-200 to-blue-300">
       <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-6 mb-10">
@@ -416,7 +593,13 @@ export default function FinancialPlanForm() {
             <button onClick={() => setStep(prev => prev - 1)} className="text-blue-600 cursor-pointer">← Назад</button>
           ) : <div />}
           {step < steps.length && (
-            <button onClick={() => setStep(prev => prev + 1)} className="btn cursor-pointer">Далі →</button>
+            <button 
+              onClick={() => setStep(prev => prev + 1)} 
+              className="btn cursor-pointer disabled:accent-neutral-400"
+              disabled={!isStepValid()}
+            >
+              Далі →
+            </button>
           )}
         </div>
       </div>

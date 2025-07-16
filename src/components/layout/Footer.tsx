@@ -9,7 +9,10 @@ export default function Footer() {
           className=" text-blue-600 underline">
           Instagram
         </Link>{" "}
-        або залиш заявку на сайті.
+        або {" "}
+        <Link href="https://t.me/vash_iv" target="_blank" className=" text-blue-600 underline">
+          Telegram
+        </Link>
       </p>
     </footer>
   );
