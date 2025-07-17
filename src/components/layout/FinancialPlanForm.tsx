@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import axios from 'axios';
-import { div, p } from 'framer-motion/client';
 
 const currencies = ['USD', 'EUR', 'UAH'];
 const risk = ['низький', 'середній', 'люблю ризик'];
