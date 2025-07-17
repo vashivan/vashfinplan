@@ -4,8 +4,10 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import axios from 'axios';
+import { div, p } from 'framer-motion/client';
 
-const currencies = ['USD', 'EUR', 'KRW', 'UAH'];
+const currencies = ['USD', 'EUR', 'UAH'];
+const risk = ['низький', 'середній', 'люблю ризик'];
 
 export default function FinancialPlanForm() {
   const [step, setStep] = useState(1);
@@ -13,15 +15,44 @@ export default function FinancialPlanForm() {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    name: '', email: '', phone: '', income: '', currency: 'USD', expenses: '',
-    hasDebt: false, debt: '', bufferMonths: '', hasBuffer: false, bufferAmount: '',
-    monthlyInvestment: '', investmentType: 'regular', goalYear: '', goalReason: '',
-    contact: '', periodMonths: '', housing: '', food: '', cafes: '',
-    entertainment: '', otherExpenses: '', plannedExpensesDesc: '', plannedExpensesAmount: '',
-    incomeSources: '', passiveIncome: '', country: '', taxStatus: '',
-    tracksExpenses: '', emotionalSpending: '', budgetingExperience: '',
-    lifePriorities: '', investmentStyle: '', currentSavings: '', currentInvestments: '',
-    riskTolerance: '', investmentExperience: '', futureEvents: ''
+    name: '',
+    email: '',
+    phone: '',
+    income: '',
+    currency: 'USD',
+    expenses: '',
+    hasDebt: false,
+    debt: '',
+    bufferMonths: '',
+    hasBuffer: false,
+    bufferAmount: '',
+    monthlyInvestment: '',
+    investmentType: 'regular',
+    goalYear: '',
+    goalReason: '',
+    contact: '',
+    periodMonths: '',
+    housing: '',
+    food: '',
+    cafes: '',
+    entertainment: '',
+    otherExpenses: '',
+    plannedExpensesDesc: '',
+    plannedExpensesAmount: '',
+    incomeSources: '',
+    passiveIncome: '',
+    country: '',
+    taxStatus: '',
+    tracksExpenses: '',
+    emotionalSpending: '',
+    budgetingExperience: '',
+    lifePriorities: '',
+    investmentStyle: '',
+    currentSavings: '',
+    currentInvestments: '',
+    riskTolerance: '',
+    investmentExperience: '',
+    futureEvents: ''
   });
 
   const getInputClass = (key: keyof typeof formData) => {
@@ -36,11 +67,10 @@ export default function FinancialPlanForm() {
       if (step === 8) return key === 'periodMonths';
       return false;
     };
-  
+
     const isEmpty = formData[key] === '';
-    return `input mb-4 mr-3 border-b-2 ${
-      isRequired() && isEmpty ? 'border-red-500' : 'border-b-blue-400'
-    }`;
+    return `w-full input mb-4 mr-3 border-b-2 ${isRequired() && isEmpty ? 'border-red-500' : 'border-b-blue-400'
+      }`;
   };
 
   const handleChange = (key: string, value: string | boolean) => {
@@ -80,6 +110,7 @@ export default function FinancialPlanForm() {
         // Поточні заощадження та інвестиції
         currentSavings: Number(formData.currentSavings),
         currentInvestments: Number(formData.currentInvestments),
+        riskTolerance: formData.riskTolerance
       };
 
       await fetch('/api/save-client', {
@@ -141,7 +172,7 @@ export default function FinancialPlanForm() {
             placeholder="Email"
             value={formData.email}
             onChange={e => handleChange('email', e.target.value)}
-             className={getInputClass('email')}
+            className={getInputClass('email')}
             required
           />
           <input
@@ -171,7 +202,7 @@ export default function FinancialPlanForm() {
           <select
             value={formData.currency}
             onChange={e => handleChange('currency', e.target.value)}
-            className="input"
+            className="input border-b-2 border-blue-400"
           >
             {currencies.map(cur => (
               <option key={cur} value={cur}>{cur}</option>
@@ -269,7 +300,7 @@ export default function FinancialPlanForm() {
           <select
             value={formData.investmentType}
             onChange={e => handleChange('investmentType', e.target.value)}
-            className="investmentType"
+            className="investmentType border-b-2 border-blue-400"
           >
             <option value="regular">Регулярно</option>
             <option value="variable">Залежить від контрактів</option>
@@ -323,7 +354,7 @@ export default function FinancialPlanForm() {
             type="text"
             placeholder="Житло (оренда, комуналка)"
             value={formData.housing}
-            onChange={e => setFormData(prev => ({ ...prev, housing: e.target.value }))}  className={getInputClass('housing')}
+            onChange={e => setFormData(prev => ({ ...prev, housing: e.target.value }))} className={getInputClass('housing')}
           />
           <input
             type="text"
@@ -477,13 +508,15 @@ export default function FinancialPlanForm() {
       content: (
         <>
           <p className="text-sm text-gray-600 mb-5">Важливо почути про твій досвід та відношення до інвестицій загалом. Просто дай чесну відповідь у довільному форматі.</p>
-          <input
-            type="text"
-            placeholder="Рівень толерантності до ризику"
+          <select
             value={formData.riskTolerance}
-            onChange={e => setFormData(prev => ({ ...prev, riskTolerance: e.target.value }))}
-            className={getInputClass('riskTolerance')}
-          />
+            onChange={e => handleChange('riskTolerance', e.target.value)}
+            className="input mb-10 border-b-2 border-blue-400"
+          >
+            {risk.map(cur => (
+              <option key={cur} value={cur}>{cur}</option>
+            ))}
+          </select>
           <input
             type="text"
             placeholder="Чи є досвід інвестування?"
@@ -513,14 +546,21 @@ export default function FinancialPlanForm() {
       title: 'Готово!',
       content: (
         <>
-          <p className="text-sm text-gray-600 mb-5">Натисни кнопку, щоб створити персональний PDF з фінансовим планом на основі твоїх відповідей.</p>
-          <button onClick={handleSubmit} className="w-full rounded-xl bg-blue-500 px-6 py-3 text-white text-base font-semibold shadow-md hover:bg-blue-600 transition duration-300 ease-in-out">
-            {loading ? (
-              <p>Аналіз</p>
-            ) : (
-              <p>Створити мій фінансовий план</p>
-            )}
-          </button>
+          {pdfUrl ? (
+            <p></p>
+          ) : (
+            <div>
+              <p className="text-sm text-gray-600 mb-5">Натисни кнопку, щоб створити персональний PDF з фінансовим планом на основі твоїх відповідей.</p>
+              <button onClick={handleSubmit} className="w-full rounded-xl bg-blue-500 px-6 py-3 text-white text-base font-semibold shadow-md hover:bg-blue-600 transition duration-300 ease-in-out">
+                {loading ? (
+                  <p>Аналіз</p>
+                ) : (
+                  <p>Створити мій фінансовий план</p>
+                )}
+              </button>
+            </div>
+          )}
+
         </>
       )
     }
@@ -549,8 +589,8 @@ export default function FinancialPlanForm() {
       default:
         return true; // інші кроки не обов’язкові
     }
-  }; 
-  
+  };
+
   return (
     <section className="h-[100dvh] flex flex-col justify-center items-center px-4 py-12 bg-gradient-to-tr from-blue-100 via-blue-200 to-blue-300">
       <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-6 mb-10">
@@ -593,8 +633,8 @@ export default function FinancialPlanForm() {
             <button onClick={() => setStep(prev => prev - 1)} className="text-blue-600 cursor-pointer">← Назад</button>
           ) : <div />}
           {step < steps.length && (
-            <button 
-              onClick={() => setStep(prev => prev + 1)} 
+            <button
+              onClick={() => setStep(prev => prev + 1)}
               className="btn cursor-pointer disabled:accent-neutral-400"
               disabled={!isStepValid()}
             >
