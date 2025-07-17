@@ -5,6 +5,7 @@ import { readFile } from 'fs/promises';
 import { NextResponse } from 'next/server';
 import path from 'path';
 import { PDFDocument, rgb } from 'pdf-lib';
+import nodemailer from 'nodemailer';
 
 type FormData = {
   bufferAmount: number;
@@ -404,6 +405,53 @@ export async function POST(req: Request) {
 
 
     const pdfBytes = await pdfDoc.save();
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+    
+    await transporter.sendMail({
+      from: `"Фінплан" <${process.env.EMAIL_USER}>`,
+      to: process.env.EMAIL_USER, // надсилаєш самому собі
+      subject: `Новий фінплан: ${formData.name || 'Без імені'}`,
+      html: `
+        <h3>Новий фінансовий план</h3>
+        <p><strong>Ім’я:</strong> ${formData.name}</p>
+        <p><strong>Email:</strong> ${formData.email}</p>
+        <p><strong>Контакт:</strong> ${formData.contact}</p>
+        <p><strong>Дата:</strong> ${new Date().toLocaleDateString()}</p>
+      `,
+      attachments: [
+        {
+          filename: 'finplan.pdf',
+          content: Buffer.from(pdfBytes),
+        },
+      ],
+    });
+
+    await transporter.sendMail({
+      from: `"Ваш фінплан. Він вже готовий." <${process.env.EMAIL_USER}>`,
+      to: `${formData.email}`, // надсилаєш самому собі
+      subject: `Новий фінплан: ${formData.name || 'Без імені'}`,
+      html: `
+        <h3>Новий фінансовий план</h3>
+        <p><strong>Ім’я:</strong> ${formData.name}</p>
+        <p><strong>Email:</strong> ${formData.email}</p>
+        <p><strong>Контакт:</strong> ${formData.contact}</p>
+        <p><strong>Дата:</strong> ${new Date().toLocaleDateString()}</p>
+      `,
+      attachments: [
+        {
+          filename: 'finplan.pdf',
+          content: Buffer.from(pdfBytes),
+        },
+      ],
+    });
+    
 
     return new Response(pdfBytes, {
       status: 200,

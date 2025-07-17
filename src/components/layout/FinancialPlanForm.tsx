@@ -134,18 +134,6 @@ export default function FinancialPlanForm() {
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       setPdfUrl(url);
-
-      const emailData = {
-        service_id: "service_4qzmcqt",
-        template_id: "template_4tzi8uz",
-        user_id: "JO5EenBZtLwYS-_-V",
-        template_params: {
-          ...generateTemplateParams(formData),
-          reply_to: formData.email,
-        },
-      };
-
-      await axios.post('https://api.emailjs.com/api/v1.0/email/send', emailData);
     } catch (err) {
       console.error('Error submitting form', err);
     }
