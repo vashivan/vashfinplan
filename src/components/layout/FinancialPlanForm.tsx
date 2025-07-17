@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import axios from 'axios';
 
 const currencies = ['USD', 'EUR', 'UAH'];
 const risk = ['низький', 'середній', 'люблю ризик'];
@@ -74,14 +73,6 @@ export default function FinancialPlanForm() {
 
   const handleChange = (key: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [key]: value }));
-  };
-
-  const generateTemplateParams = (data: typeof formData) => {
-    const params: { [key: string]: string } = {};
-    Object.entries(data).forEach(([key, value]) => {
-      params[key] = typeof value === 'boolean' ? (value ? 'Так' : 'Ні') : String(value ?? '');
-    });
-    return params;
   };
 
   const handleSubmit = async () => {
