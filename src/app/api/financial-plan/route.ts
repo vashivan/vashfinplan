@@ -50,7 +50,7 @@ export async function POST(req: Request) {
       const words = text.split(' ');
       const lines: string[] = [];
       let currentLine = '';
-  
+
       for (const word of words) {
         const testLine = currentLine ? `${currentLine} ${word}` : word;
         const width = font.widthOfTextAtSize(testLine, fontSize);
@@ -61,7 +61,7 @@ export async function POST(req: Request) {
           currentLine = word;
         }
       }
-  
+
       if (currentLine) lines.push(currentLine);
       return lines;
     }
@@ -413,7 +413,7 @@ export async function POST(req: Request) {
         pass: process.env.EMAIL_PASS,
       },
     });
-    
+
     await transporter.sendMail({
       from: `"Фінплан" <${process.env.EMAIL_USER}>`,
       to: process.env.EMAIL_USER, // надсилаєш самому собі
@@ -438,12 +438,30 @@ export async function POST(req: Request) {
       to: `${formData.email}`, // надсилаєш самому собі
       subject: `Новий фінплан: ${formData.name || 'Без імені'}`,
       html: `
-        <h3>Новий фінансовий план</h3>
-        <p><strong>Ім’я:</strong> ${formData.name}</p>
-        <p><strong>Email:</strong> ${formData.email}</p>
-        <p><strong>Контакт:</strong> ${formData.contact}</p>
-        <p><strong>Дата:</strong> ${new Date().toLocaleDateString()}</p>
-      `,
+  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+    <h2 style="color: #205295;">Ваш фінансовий план готовий 🎉</h2>
+
+    <p>Привіт${formData.name ? `, <strong>${formData.name}</strong>` : ''}!</p>
+
+    <p>До цього листа прикріплено твій персональний фінансовий план у форматі PDF. 
+    У ньому — вся твоя базова фінансова картина, пріоритети, цілі, прогнози, а також персональні поради саме для тебе.</p>
+
+    <hr style="border: none; border-top: 1px solid #ccc; margin: 24px 0;" />
+
+    <h3 style="color: #205295;">Що далі?</h3>
+
+    <p>Якщо тобі цікаво не просто зберігати, а ефективно <strong>використовувати гроші</strong> — я можу допомогти.</p>
+    <p>Пропоную <strong>персональну консультацію</strong> і деталізований фінплан, орієнтований на твої цілі й бажані терміни — усього за <strong>$25</strong>.</p>
+    
+    <p>Напиши мені в Instagram: <a href="https://instagram.com/vash_ivan" target="_blank">@vash_ivan</a></p>
+
+    <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;" />
+
+    <p style="font-size: 14px; color: #666;">Дата запиту: ${new Date().toLocaleDateString()}</p>
+    <p style="font-size: 14px; color: #666;">Email: ${formData.email}</p>
+    <p style="font-size: 14px; color: #666;">Контакт: ${formData.contact || '—'}</p>
+  </div>
+`,
       attachments: [
         {
           filename: 'finplan.pdf',
@@ -451,7 +469,7 @@ export async function POST(req: Request) {
         },
       ],
     });
-    
+
 
     return new Response(pdfBytes, {
       status: 200,
