@@ -58,13 +58,10 @@ export async function POST(req: Request) {
     const pdfDoc = await PDFDocument.create();
     pdfDoc.registerFontkit(fontkit);
 
-    const fontPath = path.resolve(process.cwd(), 'public/fonts/Roboto-Regular.ttf');
     const emojiFontPath = path.resolve(process.cwd(), 'public/fonts/Symbola.ttf');
 
-    const fontBytes = await readFile(fontPath);
     const emojiFontBytes = await readFile(emojiFontPath);
 
-    const customFont = await pdfDoc.embedFont(fontBytes);
     const emojiCustomFont = await pdfDoc.embedFont(emojiFontBytes);
 
     const blue = rgb(0.2, 0.4, 0.8);
