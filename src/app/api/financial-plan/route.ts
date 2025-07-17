@@ -1,7 +1,6 @@
 // app/api/financial-plan/route.ts
 
 import fontkit from '@pdf-lib/fontkit';
-import { responseEncoding } from 'axios';
 import { readFile } from 'fs/promises';
 import { NextResponse } from 'next/server';
 import path from 'path';
@@ -25,32 +24,6 @@ type FormData = {
 
 
 export async function POST(req: Request) {
-
-  function wrapText(
-    text: string,
-    font: any,
-    fontSize: number,
-    maxWidth: number
-  ): string[] {
-    const words = text.split(' ');
-    const lines: string[] = [];
-    let currentLine = '';
-
-    for (const word of words) {
-      const testLine = currentLine ? `${currentLine} ${word}` : word;
-      const width = font.widthOfTextAtSize(testLine, fontSize);
-      if (width < maxWidth) {
-        currentLine = testLine;
-      } else {
-        if (currentLine) lines.push(currentLine);
-        currentLine = word;
-      }
-    }
-
-    if (currentLine) lines.push(currentLine);
-    return lines;
-  }
-
   try {
     const formData = await req.json();
     console.log('📥 Отримано дані:', formData);
@@ -66,6 +39,31 @@ export async function POST(req: Request) {
 
     const blue = rgb(0.2, 0.4, 0.8);
     const black = rgb(0.1, 0.1, 0.1);
+
+    function wrapText(
+      text: string,
+      font = emojiCustomFont,
+      fontSize: number,
+      maxWidth: number
+    ): string[] {
+      const words = text.split(' ');
+      const lines: string[] = [];
+      let currentLine = '';
+  
+      for (const word of words) {
+        const testLine = currentLine ? `${currentLine} ${word}` : word;
+        const width = font.widthOfTextAtSize(testLine, fontSize);
+        if (width < maxWidth) {
+          currentLine = testLine;
+        } else {
+          if (currentLine) lines.push(currentLine);
+          currentLine = word;
+        }
+      }
+  
+      if (currentLine) lines.push(currentLine);
+      return lines;
+    }
 
     let page = pdfDoc.addPage([595, 842]);
     page.drawRectangle({
@@ -174,7 +172,7 @@ export async function POST(req: Request) {
 
     function drawWrappedText(
       text: string,
-      font: any,
+      font = emojiCustomFont,
       fontSize = 12,
       maxWidth = 480,
       x = 50
