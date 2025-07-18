@@ -16,6 +16,7 @@ type FormData = {
   investmentExperience: string;
   income: number;
   debt?: number;
+  debtTerm?: number;
   goalReason?: string;
   country?: string;
   housing: number;
@@ -192,11 +193,17 @@ export async function POST(req: Request) {
     drawText('Постійні витрати:', `${formData.expenses} ${formData.currency}`);
     drawText('Залишається після витрат:', `${formData.income - formData.expenses} ${formData.currency}`);
 
+    const totalDebt = formData.debt && formData.debtTerm
+      ? Number(formData.debt) * Number(formData.debtTerm)
+      : 0;
+
+    const afterDebt = formData.income - formData.expenses - (formData.debt ?? 0);
+
     drawHeading('2. Борги');
     if (formData.hasDebt) {
+      drawText('Загальна сума боргу:', `${totalDebt} ${formData.currency}`);
       drawText('Борг щомісяця:', `${formData.debt ?? 0} ${formData.currency}`);
-      drawText('Залишається після сплати боргу:',
-        `${formData.income - formData.expenses - formData.debt} ${formData.currency}`);
+      drawText('Залишається після сплати місячної частки боргу:', `${afterDebt} ${formData.currency}`);
     } else {
       drawText('Немає', 'боргів');
       drawText('Залишається після витрат:', `${formData.income - formData.expenses} ${formData.currency}`);
@@ -225,34 +232,60 @@ export async function POST(req: Request) {
     drawText('Ціль:', formData.goalReason || '—');
 
     drawHeading('6. Прогноз');
+
     const periodMonths = Number(formData.periodMonths ?? 12);
-    const available = formData.income - formData.expenses;
-    const half = Math.max(available / 2, 0);
-    drawText('При умові використання всіх наявних коштів', 'результат буде виглядати так:')
+    const income = Number(formData.income);
+    const expenses = Number(formData.expenses);
+    const debt = Number(formData.debt ?? 0);
+    const debtTerm = Number(formData.debtTerm ?? 0);
+
+    drawText('При умові використання всіх наявних коштів', 'результат буде виглядати так:');
+
     if (formData.hasDebt) {
-      drawText('Доступно щомісяця:',
-        `${formData.income - formData.expenses - formData.debt} ${formData.currency}`);
-      drawText('50% на подушку:',
-        `${(formData.income - formData.expenses - formData.debt) / 2} ${formData.currency}`);
-      drawText('50% на інвестиції:',
-        `${(formData.income - formData.expenses - formData.debt) / 2} ${formData.currency}`);
+      let totalForBuffer = 0;
+      let totalForInvesting = 0;
+
+      for (let i = 0; i < periodMonths; i++) {
+        const isDebtActive = i < debtTerm;
+        const monthlyFree = income - expenses - (isDebtActive ? debt : 0);
+        const perBuffer = monthlyFree / 2;
+        const perInvest = monthlyFree / 2;
+        totalForBuffer += perBuffer;
+        totalForInvesting += perInvest;
+      }
+
+      // Малюємо узагальнену оцінку (початкові умови)
       drawText('Період (міс.):', periodMonths);
-      drawText('Очікувано на подушці:',
-        `${Math.round((formData.income - formData.expenses - formData.debt) / 2) * periodMonths} ${formData.currency}`);
-      drawText('Очікувано в інвестиціях:',
-        `~ ${Math.round((formData.income - formData.expenses - formData.debt) / 2) * periodMonths} ${formData.currency}`);
-      drawText('Загальна прогнозована сума:',
-        `${Math.round(((formData.income - formData.expenses - formData.debt) / 2) * periodMonths) * 2} ${formData.currency}`)
+
+      drawText('Очікувано на подушці:', `${Math.round(totalForBuffer)} ${formData.currency}`);
+      drawText('Очікувано в інвестиціях:', `~ ${Math.round(totalForInvesting)} ${formData.currency}`);
+      drawText('Загальна прогнозована сума:', `${Math.round(totalForBuffer + totalForInvesting)} ${formData.currency}`);
+
+      // Додаємо спеціальну пораду, якщо строк боргу менший, ніж період
+      if (debtTerm < periodMonths) {
+        drawWrappedText(
+          `Уже через ${debtTerm} міс. борг буде виплачено — твій щомісячний залишок зросте. Це хороший шанс збільшити внески або пришвидшити досягнення цілей.`,
+          emojiCustomFont,
+          12,
+          480,
+          50
+        );
+      }
+
     } else {
-      drawText('Доступно щомісяця:', `${available} ${formData.currency} `);
-      drawText('50% на подушку:', `${half} ${formData.currency} `);
-      drawText('50% на інвестиції:', `${half} ${formData.currency} `);
+      // Простий варіант без боргів
+      const available = income - expenses;
+      const half = Math.max(available / 2, 0);
+
+      drawText('Доступно щомісяця:', `${available} ${formData.currency}`);
+      drawText('50% на подушку:', `${half} ${formData.currency}`);
+      drawText('50% на інвестиції:', `${half} ${formData.currency}`);
       drawText('Період (міс.):', periodMonths);
-      drawText('Очікувано на подушці:', `${Math.round(half * periodMonths)} ${formData.currency} `);
-      drawText('Очікувано в інвестиціях:', `~ ${Math.round(half * periodMonths)} ${formData.currency} `);
-      drawText('Загальна прогнозована сума:',
-        `${Math.round(half * periodMonths) * 2} ${formData.currency}`)
+      drawText('Очікувано на подушці:', `${Math.round(half * periodMonths)} ${formData.currency}`);
+      drawText('Очікувано в інвестиціях:', `~ ${Math.round(half * periodMonths)} ${formData.currency}`);
+      drawText('Загальна прогнозована сума:', `${Math.round(half * periodMonths) * 2} ${formData.currency}`);
     }
+
 
     drawHeading('7. Деталізація витрат');
     drawText('Житло:', `${formData.housing} ${formData.currency} `);
@@ -348,6 +381,13 @@ export async function POST(req: Request) {
         if (debt > 0) {
           advice.push('Оціни свої борги: якщо ставка висока — можливо, краще спочатку погасити їх, перш ніж інвестувати.');
         }
+      }
+
+      if (totalDebt > 5000) {
+        advice.push('Загальна сума боргу суттєва. Варто розглянути пріоритетне погашення перед інвестуванням.');
+      }
+      if (formData.debtTerm && Number(formData.debtTerm) > 24) {
+        advice.push('Тривалий строк виплати боргу може створювати фінансовий тиск. Обміркуй, як скоротити цей термін.');
       }
 
       if (housing > income * 0.4) {

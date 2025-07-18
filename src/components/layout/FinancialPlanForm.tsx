@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import { div } from 'framer-motion/client';
 
 const currencies = ['USD', 'EUR', 'UAH'];
 const risk = ['низький', 'середній', 'люблю ризик'];
@@ -21,6 +22,7 @@ export default function FinancialPlanForm() {
     expenses: '',
     hasDebt: false,
     debt: '',
+    debtTerm: '',
     bufferMonths: '',
     hasBuffer: false,
     bufferAmount: '',
@@ -83,6 +85,7 @@ export default function FinancialPlanForm() {
         income: Number(formData.income),
         expenses: Number(formData.expenses),
         debt: Number(formData.debt),
+        debtTerm: Number(formData.debtTerm),
         bufferMonths: Number(formData.bufferMonths),
         bufferAmount: Number(formData.bufferAmount),
         monthlyInvestment: Number(formData.monthlyInvestment),
@@ -220,13 +223,22 @@ export default function FinancialPlanForm() {
             </label>
           </div>
           {formData.hasDebt && (
-            <input
-              type="text"
-              placeholder="Сума щомісячно"
-              value={formData.debt || ''}
-              onChange={e => handleChange('debt', e.target.value)}
-              className={getInputClass('debt')}
-            />
+            <div>
+              <input
+                type="text"
+                placeholder="Сума щомісячно"
+                value={formData.debt || ''}
+                onChange={e => handleChange('debt', e.target.value)}
+                className={getInputClass('debt')}
+              />
+              <input
+                type="text"
+                placeholder="Кількість місяців"
+                value={formData.debtTerm}
+                onChange={e => handleChange('debtTerm', e.target.value)}
+                className={getInputClass('debt')}
+              />
+            </div>
           )}
         </>
       )
@@ -529,9 +541,19 @@ export default function FinancialPlanForm() {
           ) : (
             <div>
               <p className="text-sm text-gray-600 mb-5">Натисни кнопку, щоб створити персональний PDF з фінансовим планом на основі твоїх відповідей.</p>
-              <button onClick={handleSubmit} className="w-full rounded-xl bg-blue-500 px-6 py-3 text-white text-base font-semibold shadow-md hover:bg-blue-600 transition duration-300 ease-in-out">
+              <button
+                onClick={handleSubmit}
+                disabled={loading}
+                className="w-full rounded-xl bg-blue-500 px-6 py-3 text-white text-base font-semibold shadow-md hover:bg-blue-600 transition duration-300 ease-in-out disabled: color-gray/50"
+              >
                 {loading ? (
-                  <p>Аналіз</p>
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="flex gap-1">
+                      <span className="w-1.5 h-1.5 bg-white rounded-full animate-bounce"></span>
+                      <span className="w-1.5 h-1.5 bg-white rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                      <span className="w-1.5 h-1.5 bg-white rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                    </span>
+                  </div>
                 ) : (
                   <p>Створити мій фінансовий план</p>
                 )}
