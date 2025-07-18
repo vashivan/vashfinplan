@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { div } from 'framer-motion/client';
 
 const currencies = ['USD', 'EUR', 'UAH'];
 const risk = ['низький', 'середній', 'люблю ризик'];
