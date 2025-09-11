@@ -2,6 +2,7 @@
 
 import React from "react";
 import styles from "../../styles/LearnMore.module.scss";
+import Link from "next/link";
 
 export const LearnMore = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(
   (props, ref) => {
@@ -20,9 +21,11 @@ export const LearnMore = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDi
               Я допомагаю амбітним людям жити на повну сьогодні
               й бути впевненими у завтрашньому дні.
             </h3>
-            {/* <button className={styles.learnmore_button}>
+            <button className={styles.learnmore_button}>
+              <Link href="/form" className="text-white no-underline">
               Дізнатися більше
-            </button> */}
+              </Link>
+            </button>
           </div>
 
           {/* Права колонка (фото) */}
