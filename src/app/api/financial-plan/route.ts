@@ -1,5 +1,3 @@
-// app/api/financial-plan/route.ts
-
 import fontkit from '@pdf-lib/fontkit';
 import { readFile } from 'fs/promises';
 import { NextResponse } from 'next/server';
@@ -428,7 +426,7 @@ export async function POST(req: Request) {
     });
     y -= 30;
 
-    const finalNote = `Якщо тобі цікаво не просто зберігати, а використовувати гроші ефективно — я можу допомогти. Проведу консультацію та складу персональний фінплан з урахуванням твоїх цілей, пріоритетів та бажаного терміну. Вартість — символічні $25. Напиши в Instagram @vash_ivan — домовимось.`;
+    const finalNote = `Якщо тобі цікаво не просто зберігати, а використовувати гроші ефективно — я можу допомогти. Проведу консультацію та складу персональний фінансовий план з урахуванням твоїх цілей, пріоритетів та бажаного терміну.`;
 
     const finalNoteLines = wrapText(finalNote, emojiCustomFont, 12, 480);
     finalNoteLines.forEach(line => {

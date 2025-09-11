@@ -1,11 +1,10 @@
 'use client'
 
-import Footer from './Footer';
 import Link from 'next/link';
 
-export default function Home() {
+export default function Finplan() {
   return (
-    <main className="flex flex-col items-center justify-between px-4 pt-16 pb-6 bg-gradient-to-tr from-blue-400 via-blue-300 to-blue-200 text-gray-900">
+    <main className="flex flex-col items-center justify-between px-4 pt-16 pb-6 bg-transparent text-gray-900">
       {/* HERO */}
       <section className="max-w-3xl text-center mb-12 px-4">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4 leading-tight">
@@ -40,8 +39,6 @@ export default function Home() {
           </button>
         </Link>
       </section>
-
-      <Footer />
     </main>
   );
 }

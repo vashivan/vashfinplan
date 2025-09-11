@@ -1,4 +1,3 @@
-import Footer from "@/components/layout/Footer";
 import Link from "next/link";
 
 export default function IBKRGuidePage() {
@@ -48,8 +47,6 @@ export default function IBKRGuidePage() {
           <li>Не лякайтесь великої анкети — це нормально для європейських брокерів</li>
         </ul>
       </section>
-
-      <Footer />
     </main>
   );
 }

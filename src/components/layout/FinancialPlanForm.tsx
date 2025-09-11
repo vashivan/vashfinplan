@@ -144,7 +144,7 @@ export default function FinancialPlanForm() {
             placeholder="Ім’я"
             value={formData.name}
             onChange={e => handleChange('name', e.target.value)}
-            className={getInputClass('name')}
+            className={`${getInputClass('name')} text-black outline-none`}
             required
           />
           <input
@@ -152,7 +152,7 @@ export default function FinancialPlanForm() {
             placeholder="Email"
             value={formData.email}
             onChange={e => handleChange('email', e.target.value)}
-            className={getInputClass('email')}
+            className={`${getInputClass('email')} text-black outline-none`}
             required
           />
           <input
@@ -160,7 +160,7 @@ export default function FinancialPlanForm() {
             placeholder="Номер телефону"
             value={formData.phone}
             onChange={e => handleChange('phone', e.target.value)}
-            className={getInputClass('phone')}
+            className={`${getInputClass('phone')} text-black outline-none`}
             required
           />
         </>
@@ -172,17 +172,17 @@ export default function FinancialPlanForm() {
         <>
           <p className="text-sm text-gray-600 mb-5">Вкажи, скільки ти зазвичай заробляєш щомісяця. Це допоможе розрахувати, яку частину можна зберігати або інвестувати.</p>
           <input
-            type="text"
+            type="number"
             placeholder="Сума в місяць"
             value={formData.income}
             onChange={e => handleChange('income', e.target.value)}
-            className={getInputClass('income')}
+            className={`${getInputClass('income')} text-black outline-none`}
             required
           />
           <select
             value={formData.currency}
             onChange={e => handleChange('currency', e.target.value)}
-            className="input border-b-2 border-blue-400"
+            className="input border-b-2 text-black outline-none"
           >
             {currencies.map(cur => (
               <option key={cur} value={cur}>{cur}</option>
@@ -197,11 +197,11 @@ export default function FinancialPlanForm() {
         <>
           <p className="text-sm text-gray-600 mb-5">Вкажи, скільки ти витрачаєш на життя щомісяця. Це дозволить зрозуміти, скільки коштів залишається.</p>
           <input
-            type="text"
+            type="number"
             placeholder="Сума витрат"
             value={formData.expenses}
             onChange={e => handleChange('expenses', e.target.value)}
-            className={getInputClass('expenses')}
+            className={`${getInputClass('expenses')} text-black outline-none`}
           />
         </>
       )
@@ -214,28 +214,28 @@ export default function FinancialPlanForm() {
           <div className="mb-2">
             <label className="mr-4">
               <input type="radio" name="debt" checked={formData.hasDebt} onChange={() => handleChange('hasDebt', true)} />
-              <span className="ml-1">Так</span>
+              <span className="ml-1 text-black">Так</span>
             </label>
             <label className="ml-4">
               <input type="radio" name="debt" checked={!formData.hasDebt} onChange={() => handleChange('hasDebt', false)} />
-              <span className="ml-1">Ні</span>
+              <span className="ml-1 text-black">Ні</span>
             </label>
           </div>
           {formData.hasDebt && (
             <div>
               <input
-                type="text"
+                type="number"
                 placeholder="Сума щомісячно"
                 value={formData.debt || ''}
                 onChange={e => handleChange('debt', e.target.value)}
-                className={getInputClass('debt')}
+                className={`${getInputClass('debt')} text-black outline-none`}
               />
               <input
-                type="text"
+                type="number"
                 placeholder="Кількість місяців"
                 value={formData.debtTerm}
                 onChange={e => handleChange('debtTerm', e.target.value)}
-                className={getInputClass('debt')}
+                className={`${getInputClass('debt')} text-black outline-none`}
               />
             </div>
           )}
@@ -248,15 +248,16 @@ export default function FinancialPlanForm() {
         <>
           <p className="text-sm text-gray-600 mb-5">Скільки місяців життя ти хочеш покрити резервним фондом (на випадок без роботи)?</p>
           <input
-            type="text"
+            type="number"
             placeholder="Кількість місяців"
             value={formData.bufferMonths}
             onChange={e => handleChange('bufferMonths', e.target.value)}
-            className={getInputClass('bufferMonths')}
+            className={`${getInputClass('bufferMonths')} text-black outline-none`}
           />
-          <label className="flex items-center gap-2">
+          <label className="flex items-center gap- text-black">
             <input
               type="checkbox"
+              className="mr-2"
               checked={formData.hasBuffer}
               onChange={e => handleChange('hasBuffer', e.target.checked)}
             />
@@ -280,16 +281,16 @@ export default function FinancialPlanForm() {
         <>
           <p className="text-sm text-gray-600 mb-5">Скільки ти реально готовий(а) відкладати на інвестиції щомісяця?</p>
           <input
-            type="text"
+            type="number"
             placeholder="Сума щомісяця"
             value={formData.monthlyInvestment}
             onChange={e => handleChange('monthlyInvestment', e.target.value)}
-            className={getInputClass('monthlyInvestment')}
+            className={`${getInputClass('monthlyInvestment')} text-black outline-none`}
           />
           <select
             value={formData.investmentType}
             onChange={e => handleChange('investmentType', e.target.value)}
-            className="investmentType border-b-2 border-blue-400"
+            className="investmentType border-b-2 border-blue-400 text-black outline-none"
           >
             <option value="regular">Регулярно</option>
             <option value="variable">Залежить від контрактів</option>
@@ -303,18 +304,18 @@ export default function FinancialPlanForm() {
         <>
           <p className="text-sm text-gray-600 mb-5">Яку суму хочеш накопичити за певний період? І яка твоя головна мета?</p>
           <input
-            type="text"
+            type="number"
             placeholder="Сума за період"
             value={formData.goalYear}
             onChange={e => handleChange('goalYear', e.target.value)}
-            className={getInputClass('goalYear')}
+            className={`${getInputClass('goalYear')} text-black outline-none`}
           />
           <input
             type="text"
             placeholder="Мета (квартира, свобода від роботи...)"
             value={formData.goalReason}
             onChange={e => handleChange('goalReason', e.target.value)}
-            className={getInputClass('goalReason')}
+            className={`${getInputClass('goalReason')} text-black outline-none`}
           />
         </>
       )
@@ -325,11 +326,11 @@ export default function FinancialPlanForm() {
         <>
           <p className="text-sm text-gray-600 mb-5">На скільки місяців хочеш будувати фінансовий план?</p>
           <input
-            type="text"
+            type="number"
             placeholder="6, 12 або 24 місяці..."
             value={formData.periodMonths}
             onChange={e => handleChange('periodMonths', e.target.value)}
-            className={getInputClass('periodMonths')}
+            className={`${getInputClass('periodMonths')} text-black outline-none`}
           />
         </>
       )
@@ -340,38 +341,39 @@ export default function FinancialPlanForm() {
         <>
           <p className="text-sm text-gray-600 mb-5">Давай розберемо детальніше на що йдуть твої гроші. Це допоможе тобі краще оцінити свої потреби до життя. Порахуй або напиши приблизно як ти вважаєш.</p>
           <input
-            type="text"
+            type="number"
             placeholder="Житло (оренда, комуналка)"
             value={formData.housing}
-            onChange={e => setFormData(prev => ({ ...prev, housing: e.target.value }))} className={getInputClass('housing')}
+            onChange={e => setFormData(prev => ({ ...prev, housing: e.target.value }))} 
+            className={`${getInputClass('housing')} text-black outline-none`}
           />
           <input
-            type="text"
+            type="number"
             placeholder="Їжа (магазин, доставка)"
             value={formData.food}
             onChange={e => setFormData(prev => ({ ...prev, food: e.target.value }))}
-            className={getInputClass('food')}
+            className={`${getInputClass('food')} text-black outline-none`}
           />
           <input
-            type="text"
+            type="number"
             placeholder="Кафе та ресторани"
             value={formData.cafes}
             onChange={e => setFormData(prev => ({ ...prev, cafes: e.target.value }))}
-            className={getInputClass('cafes')}
+            className={`${getInputClass('cafes')} text-black outline-none`}
           />
           <input
-            type="text"
+            type="number"
             placeholder="Розваги, подорожі, хобі"
             value={formData.entertainment}
             onChange={e => setFormData(prev => ({ ...prev, entertainment: e.target.value }))}
-            className={getInputClass('entertainment')}
+            className={`${getInputClass('entertainment')} text-black outline-none`} 
           />
           <input
-            type="text"
+            type="number"
             placeholder="Інше (звʼязок, транспорт...)"
             value={formData.otherExpenses}
             onChange={e => setFormData(prev => ({ ...prev, otherExpenses: e.target.value }))}
-            className={getInputClass('otherExpenses')}
+            className={`${getInputClass('otherExpenses')} text-black outline-none`} 
           />
         </>
       )
@@ -386,14 +388,14 @@ export default function FinancialPlanForm() {
             placeholder="Опис запланованих витрат"
             value={formData.plannedExpensesDesc}
             onChange={e => setFormData(prev => ({ ...prev, plannedExpensesDesc: e.target.value }))}
-            className={getInputClass('plannedExpensesDesc')}
+            className={`${getInputClass('plannedExpensesDesc')} text-black outline-none`}
           />
           <input
-            type="text"
+            type="number"
             placeholder="Сума"
             value={formData.plannedExpensesAmount}
             onChange={e => setFormData(prev => ({ ...prev, plannedExpensesAmount: e.target.value }))}
-            className={getInputClass('plannedExpensesAmount')}
+            className={`${getInputClass('plannedExpensesAmount')} text-black outline-none`}
           />
         </>
       )
@@ -408,14 +410,14 @@ export default function FinancialPlanForm() {
             placeholder="Країна проживання / роботи"
             value={formData.country}
             onChange={e => setFormData(prev => ({ ...prev, country: e.target.value }))}
-            className={getInputClass('country')}
+            className={`${getInputClass('country')} text-black outline-none`}
           />
           <input
             type="text"
             placeholder="Податковий статус або ФОП"
             value={formData.taxStatus}
             onChange={e => setFormData(prev => ({ ...prev, taxStatus: e.target.value }))}
-            className={getInputClass('taxStatus')}
+            className={`${getInputClass('taxStatus')} text-black outline-none`}
           />
         </>
       )
@@ -430,20 +432,20 @@ export default function FinancialPlanForm() {
             placeholder="Чи ведеш облік витрат?"
             value={formData.tracksExpenses}
             onChange={e => setFormData(prev => ({ ...prev, tracksExpenses: e.target.value }))}
-            className={getInputClass('tracksExpenses')}
+            className={`${getInputClass('tracksExpenses')} text-black outline-none`}
           />
           <input
             type="text"
             placeholder="Чи бувають емоційні витрати?"
             value={formData.emotionalSpending}
             onChange={e => setFormData(prev => ({ ...prev, emotionalSpending: e.target.value }))}
-            className={getInputClass('emotionalSpending')}
+            className={`${getInputClass('emotionalSpending')} text-black outline-none`}
           />
           <input
             type="text"
             placeholder="Досвід у веденні бюджету" value={formData.budgetingExperience}
             onChange={e => setFormData(prev => ({ ...prev, budgetingExperience: e.target.value }))}
-            className={getInputClass('budgetingExperience')}
+            className={`${getInputClass('budgetingExperience')} text-black outline-none`}
           />
         </>
       )
@@ -458,14 +460,14 @@ export default function FinancialPlanForm() {
             placeholder="Що для тебе найважливіше?"
             value={formData.lifePriorities}
             onChange={e => setFormData(prev => ({ ...prev, lifePriorities: e.target.value }))}
-            className={getInputClass('lifePriorities')}
+            className={`${getInputClass('lifePriorities')} text-black outline-none`}
           />
           <input
             type="text"
             placeholder="Інвестуєш активно чи пасивно?"
             value={formData.investmentStyle}
             onChange={e => setFormData(prev => ({ ...prev, investmentStyle: e.target.value }))}
-            className={getInputClass('investmentStyle')}
+            className={`${getInputClass('investmentStyle')} text-black outline-none`}
           />
         </>
       )
@@ -480,14 +482,14 @@ export default function FinancialPlanForm() {
             placeholder="Де зберігаєш гроші?"
             value={formData.currentSavings}
             onChange={e => setFormData(prev => ({ ...prev, currentSavings: e.target.value }))}
-            className={getInputClass('currentSavings')}
+            className={`${getInputClass('currentSavings')} text-black outline-none`}
           />
           <input
             type="text"
             placeholder="Які інвестиції вже маєш?"
             value={formData.currentInvestments}
             onChange={e => setFormData(prev => ({ ...prev, currentInvestments: e.target.value }))}
-            className={getInputClass('currentInvestments')}
+            className={`${getInputClass('currentInvestments')} text-black outline-none`}
           />
         </>
       )
@@ -500,7 +502,7 @@ export default function FinancialPlanForm() {
           <select
             value={formData.riskTolerance}
             onChange={e => handleChange('riskTolerance', e.target.value)}
-            className="input mb-10 border-b-2 border-blue-400"
+            className="input mb-10 border-b-2 border-blue-400 text-black outline-none"
           >
             {risk.map(cur => (
               <option key={cur} value={cur}>{cur}</option>
@@ -511,7 +513,7 @@ export default function FinancialPlanForm() {
             placeholder="Чи є досвід інвестування?"
             value={formData.investmentExperience}
             onChange={e => setFormData(prev => ({ ...prev, investmentExperience: e.target.value }))}
-            className={getInputClass('investmentExperience')}
+            className={`${getInputClass('investmentExperience')} text-black outline-none`}
           />
         </>
       )
@@ -526,7 +528,7 @@ export default function FinancialPlanForm() {
             placeholder="Наприклад: переїзд, навчання, дитина..."
             value={formData.futureEvents}
             onChange={e => setFormData(prev => ({ ...prev, futureEvents: e.target.value }))}
-            className={getInputClass('futureEvents')}
+            className={`${getInputClass('futureEvents')} text-black outline-none`}
           />
         </>
       )
@@ -543,7 +545,7 @@ export default function FinancialPlanForm() {
               <button
                 onClick={handleSubmit}
                 disabled={loading}
-                className="w-full rounded-xl bg-blue-500 px-6 py-3 text-white text-base font-semibold shadow-md hover:bg-blue-600 transition duration-300 ease-in-out disabled: color-gray/50"
+                className="w-full cursor-pointer rounded-xl bg-green-700 px-6 py-3 text-white text-base font-semibold shadow-md hover:bg-green-800 transition duration-300 ease-in-out disabled: color-gray/50"
               >
                 {loading ? (
                   <div className="flex items-center justify-center gap-2">
@@ -591,8 +593,8 @@ export default function FinancialPlanForm() {
   };
 
   return (
-    <section className="h-[100dvh] flex flex-col justify-center items-center px-4 py-12 bg-gradient-to-tr from-blue-100 via-blue-200 to-blue-300">
-      <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-6 mb-10">
+    <section className="h-[100dvh] flex flex-col justify-center items-center px-4 py-12 bg-green-950">
+      <div className="w-full max-w-xl bg-rose-50 rounded-2xl shadow-xl p-6 mb-10">
         <div className="flex flex-col text-sm text-gray-500 mb-4 text-right">
           <span>Крок {step} з 17</span>
           <span>{progress}%</span>
@@ -629,12 +631,12 @@ export default function FinancialPlanForm() {
 
         <div className="mt-8 flex justify-between items-center">
           {step > 1 ? (
-            <button onClick={() => setStep(prev => prev - 1)} className="text-blue-600 cursor-pointer">← Назад</button>
+            <button onClick={() => setStep(prev => prev - 1)} className="text-black cursor-pointer">← Назад</button>
           ) : <div />}
           {step < steps.length && (
             <button
               onClick={() => setStep(prev => prev + 1)}
-              className="btn cursor-pointer disabled:accent-neutral-400"
+              className="btn cursor-pointer disabled:accent-neutral-400 text-black"
               disabled={!isStepValid()}
             >
               Далі →
@@ -642,7 +644,7 @@ export default function FinancialPlanForm() {
           )}
         </div>
       </div>
-      <Link href="/" className="text-sm text-gray-600 hover:underline">Скасувати</Link>
+      <Link href="/" className="text-xl text-white hover:underline">Скасувати</Link>
     </section>
   );
 }

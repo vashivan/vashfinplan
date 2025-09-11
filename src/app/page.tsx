@@ -3,7 +3,7 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 
-const HomePage = dynamic(() => import('../components/layout/Home'));
+const HomePage = dynamic(() => import('../components/layout/HomePage'));
 
 export default function Home() {
   return (
