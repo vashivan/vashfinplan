@@ -21,9 +21,12 @@ export const LearnMore = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDi
               Я допомагаю амбітним людям жити на повну сьогодні
               й бути впевненими у завтрашньому дні.
             </h3>
+            <p className="text-black">
+              Оціни свій фінансовий потенціал за допомогою <strong>першого фінплану</strong>.
+            </p>
             <button className={styles.learnmore_button}>
               <Link href="/form" className="text-white no-underline">
-              Дізнатися більше
+                Дізнатися більше
               </Link>
             </button>
           </div>

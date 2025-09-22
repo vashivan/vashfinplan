@@ -19,15 +19,15 @@ export default function WhyMe() {
 
           <ul className="mt-7 space-y-3 text-orange-950">
             <li className="flex gap-3">
-              <CheckCircle size={18} className="mt-1 text-orange-950" />
+              <span><CheckCircle size={18} className="mt-1 text-orange-950" /></span>
               1:1 консультації — стратегія, ризик-профіль, старт інвестицій
             </li>
             <li className="flex gap-3">
-              <CheckCircle size={18} className="mt-1 text-orange-950" />
+              <span><CheckCircle size={18} className="mt-1 text-orange-950" /></span>
               Навчальні матеріали, воркшопи та сесії
             </li>
             <li className="flex gap-3">
-              <CheckCircle size={18} className="mt-1 text-orange-950" />
+              <span><CheckCircle size={18} className="mt-1 text-orange-950" /></span>
               Супровід за потреби — від відкриття брокера до першого повноцінного портфеля
             </li>
           </ul>
