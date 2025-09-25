@@ -99,7 +99,7 @@ export const FitCheckForm = forwardRef<HTMLDivElement, FitCheckProps>(
               placeholder="Введіть ваше ім’я"
               value={formData.name}
               onChange={handleChange}
-              className="text-orange-900 w-full border border-amber-900 rounded-lg p-2 focus:ring-2 focus:ring-orange-800"
+              className="text-orange-900 w-full border border-amber-900 p-2 focus:ring-2 focus:ring-orange-800"
               required
             />
           </div>
@@ -118,7 +118,7 @@ export const FitCheckForm = forwardRef<HTMLDivElement, FitCheckProps>(
               placeholder="example@email.com"
               value={formData.email}
               onChange={handleChange}
-              className="text-orange-900 w-full border border-amber-900 rounded-lg p-2 focus:ring-2 focus:ring-orange-800"
+              className="text-orange-900 w-full border border-amber-900 p-2 focus:ring-2 focus:ring-orange-800"
               required
             />
           </div>
@@ -137,7 +137,7 @@ export const FitCheckForm = forwardRef<HTMLDivElement, FitCheckProps>(
               placeholder="+380..."
               value={formData.phone}
               onChange={handleChange}
-              className="text-orange-900 w-full border border-amber-900 rounded-lg p-2 focus:ring-2 focus:ring-orange-800"
+              className="text-orange-900 w-full border border-amber-900 p-2 focus:ring-2 focus:ring-orange-800"
               required
             />
           </div>
@@ -155,7 +155,7 @@ export const FitCheckForm = forwardRef<HTMLDivElement, FitCheckProps>(
               placeholder="Ваші побажання..."
               value={formData.message}
               onChange={handleChange}
-              className="text-orange-900 w-full border border-amber-900 rounded-lg p-2 focus:ring-2 focus:ring-orange-800"
+              className="text-orange-900 w-full border border-amber-900 p-2 focus:ring-2 focus:ring-orange-800"
               rows={3}
             />
           </div>
@@ -163,7 +163,7 @@ export const FitCheckForm = forwardRef<HTMLDivElement, FitCheckProps>(
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition disabled:opacity-60 cursor-pointer"
+            className="w-full bg-orange-500 text-white py-2 hover:bg-orange-600 transition disabled:opacity-60 cursor-pointer"
           >
             {loading ? "Надсилаю..." : "Записатися"}
           </button>

@@ -51,7 +51,7 @@ export default function WhyMe() {
         </div>
 
         {/* Права колонка */}
-        <div className="border border-zinc-200 bg-white/40 p-6">
+        <div className="p-6">
           <h3 className="text-xl text-center text-orange-950 md:text-2xl font-semibold">Що отримаєш після першої сесії</h3>
           <div className="mt-6 grid sm:grid-cols-2 gap-5">
             {[
