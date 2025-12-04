@@ -68,16 +68,16 @@ export const FitCheckForm = forwardRef<HTMLDivElement, FitCheckProps>(
       <div
         ref={ref}
         {...rest}
-        className={`${className} ${styles.form}`}
+        className={`${className} ${styles.form} w-full`}
       >
         <div className={styles.form_image}></div>
 
-        <div className="flex flex-col items-center w-200 m-3 px-4 sm:px-8 lg:px-5 py-5">
+        <div className="flex flex-col items-center w-full max-w-md m-3 px-4 sm:px-8 lg:px-5 py-5">
         <h2 className="text-3xl font-semibold mb-4 text-center text-orange-950">
           Запис на <span className="text-orange-800">Fit-Check</span>
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4 w-100" noValidate>
+        <form onSubmit={handleSubmit} className="space-y-4 w-full" noValidate>
           {/* honeypot — приховане поле, має лишатися порожнім */}
           <input
             type="text"
