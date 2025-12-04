@@ -5,14 +5,16 @@ import React from 'react';
 import styles from "../../styles/AboutMe.module.scss";
 
 type Props = {
-  buttonClick?: () => void;
+  buttonclick?: React.MouseEventHandler<HTMLAnchorElement>;
 }
 
-export const AboutMe: React.FC<Props> = ({ buttonClick })=>{
+export const AboutMe = React.forwardRef<HTMLDivElement, Props>(
+  ( props, ref )=>{
   return (
-    <section className={`${styles.aboutme} relative overflow-hidden`}>
+    <section ref={ref} className={`${styles.aboutme} relative overflow-hidden`}>
+      <div className={styles.aboutme_image}></div>
       <div className="m-3 px-4 sm:px-8 lg:px-5 py-5">
-        <div className="grid md:grid-cols-2">
+        {/* <div className="grid md:grid-cols-2"> */}
           {/* Ліва колонка */}
           <h2 className="text-3xl md:text-5xl col-2 font-semibold leading-tight text-yellow-950 mb-5 text-right">
             Мене звати Іван
@@ -38,18 +40,20 @@ export const AboutMe: React.FC<Props> = ({ buttonClick })=>{
           {/* CTA */}
           <div className="mt-8 flex gap-3 col-2 justify-end">
             <a
-              className="inline-flex items-center gap-2 text-slate-100 bg-orange-950 px-5 py-3 font-semibold shadow-md hover:shadow-lg transition"
-              onClick={buttonClick}
+              className="inline-flex items-center gap-2 text-slate-100 bg-orange-950 px-5 py-3 font-semibold shadow-md hover:shadow-lg transition-shadow cursor-pointer"
+              onClick={props.buttonclick}
+              role="button"
+              tabIndex={0}
             >
               Забронювати «fit-check» <ArrowRight size={18} />
             </a>
           </div>
-
-          <div className='hidden md:grid-col-2 text-black col-1'>dsdwdw</div>
-        </div>
+        {/* </div> */}
       </div>
     </section>
   );
 }
+);
 
-export default AboutMe
+AboutMe.displayName = 'AboutMe';
+

@@ -3,4 +3,17 @@
   height: 100vh;
   background: #d9c5b2;
   align-items: center;
+
+    &_image {
+    display: none;
+
+    @media (min-width: 768px) {
+      width: 70%;
+      display: block;
+      height: 100vh;
+      background: url("/images/IMG_9234.jpg") 70% 20% / cover no-repeat;
+      position: relative;
+      top: 0;
+    }
+  }
 }

@@ -593,8 +593,8 @@ export default function FinancialPlanForm() {
   };
 
   return (
-    <section className="h-[100dvh] flex flex-col justify-center items-center px-4 py-12 bg-green-950">
-      <div className="w-full max-w-xl bg-rose-50 rounded-2xl shadow-xl p-6 mb-10">
+    <section className="h-[100dvh] flex flex-col justify-center items-center px-4 py-12">
+      <div className="w-full max-w-xl p-6 mb-10">
         <div className="flex flex-col text-sm text-gray-500 mb-4 text-right">
           <span>Крок {step} з 17</span>
           <span>{progress}%</span>

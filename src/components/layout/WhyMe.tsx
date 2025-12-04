@@ -6,10 +6,10 @@ import React from 'react';
 
 export default function WhyMe() {
   return (
-    <section id="about" className="relative px-4 sm:px-8 lg:px-10 py-20">
-      <div className="grid md:grid-cols-2 gap-12 items-start">
+    <section id="about" className="relative px-4 sm:px-8 lg:px-10 py-20 min-h-screen items-center content-center">
+      <div className="grid md:grid-cols-2 gap-12 align-middle">
         {/* Ліва колонка */}
-        <div>
+        <div className="align-middle">
           <h2 className="text-3xl text-orange-950 md:text-4xl font-semibold">Про мене</h2>
           <p className="mt-5 text-lg text-orange-950 leading-relaxed">
             Я фінансовий радник та інвестор. Мій підхід — <span className="font-medium">без складної термінології</span> і з практичними кроками:
@@ -34,7 +34,7 @@ export default function WhyMe() {
 
           <div className="mt-8 flex items-center gap-5 text-sm">
             <a
-              href="https://instagram.com/vash_ivan"
+              href="https://instagram.com/vash.finplan"
               target="_blank"
               rel="noopener"
               className="inline-flex text-orange-950 items-center gap-2 hover:text-orange-700 transition"
@@ -42,7 +42,7 @@ export default function WhyMe() {
               <Instagram size={16} /> Instagram
             </a>
             <a
-              href="#"
+              href="https://t.me/vash_iv"
               className="inline-flex text-orange-950 items-center gap-2 hover:text-orange-700 transition"
             >
               <MessageCircle size={16} /> Telegram

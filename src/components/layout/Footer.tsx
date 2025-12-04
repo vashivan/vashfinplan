@@ -7,7 +7,7 @@ export default function Footer() {
     <footer className="flex flex-col w-full text-center text-sm px-4 mt-0 p-7 text-black">
       <p className="text-lg">
         📩 Є питання чи потрібна допомога? Напиши в{" "}
-        <Link href="https://instagram.com/vash_ivan" target="_blank"
+        <Link href="https://instagram.com/vash.finplan" target="_blank"
           className=" text-orange-800 underline">
           Instagram
         </Link>{" "}
@@ -17,7 +17,7 @@ export default function Footer() {
         </Link>
       </p>
       <div>
-        <p className="mt-4 text-m">Copyright© 2025 VashFinPlan</p>
+        <p className="mt-4 text-m">Copyright© 2025 @vash.finplan</p>
       </div>
     </footer>
   );

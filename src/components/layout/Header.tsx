@@ -1,6 +1,5 @@
 'use client'
 
-import Navbar from "./Navbar";
 import styles from "../../styles/Header.module.scss";
 
 type Props = {
@@ -12,7 +11,6 @@ export const Header: React.FC<Props> = ({ buttonClick }) => {
   return (
     <header className={styles.header}>
       <div className={styles.header_background}></div>
-      <Navbar />
       <h1 className={`${styles.header_title1} text-xl md:text-4xl uppercase w-full text-center`}>
         фінанси під твої цілі, а не під чужі правила
       </h1>
